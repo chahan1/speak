@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1f5fbf">
+<title>道地口說轉譯器</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root { --c: #1f5fbf; --c2: #e8f0fc; --bg: #f4f6f9; --line: #e3e6eb; --txt: #1d2330; --sub: #6b7280; --red: #d93025; --green: #107c41; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; background: var(--bg); color: var(--txt); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans TC', Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.5; }
+  header { position: sticky; top: 0; z-index: 10; background: var(--c); color: #fff; display: flex; align-items: center; gap: 8px; padding: 10px 14px; padding-top: calc(10px + env(safe-area-inset-top)); }
+  header h1 { font-size: 17px; margin: 0; flex: 1; font-weight: 600; }
+  header .ver { font-size: 11px; opacity: .7; font-weight: 400; margin-left: 4px; }
+  .icon-btn { background: none; border: none; color: inherit; font-size: 20px; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; }
+  .icon-btn:active { background: rgba(255,255,255,.18); }
+  main { max-width: 680px; margin: 0 auto; padding: 12px 12px 90px; }
+  .card { background: #fff; border-radius: 14px; padding: 14px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .seg { display: flex; background: #eef1f5; border-radius: 9px; padding: 3px; gap: 2px; }
+  .seg button { border: none; background: none; padding: 5px 10px; border-radius: 7px; font-size: 13px; color: var(--sub); cursor: pointer; font-family: inherit; }
+  .seg button.on { background: #fff; color: var(--c); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,.1); }
+  .lbl { font-size: 12px; color: var(--sub); margin: 0 0 6px; }
+
+  /* 錄音區 */
+  .mic-wrap { display: flex; flex-direction: column; align-items: center; padding: 6px 0 2px; }
+  #micBtn { width: 92px; height: 92px; border-radius: 50%; border: none; background: var(--c); color: #fff; font-size: 38px; cursor: pointer; box-shadow: 0 4px 14px rgba(31,95,191,.35); transition: transform .15s; position: relative; }
+  #micBtn:active { transform: scale(.95); }
+  #micBtn.rec { background: var(--red); box-shadow: 0 0 0 0 rgba(217,48,37,.5); animation: pulse 1.4s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(217,48,37,.45); } 70% { box-shadow: 0 0 0 22px rgba(217,48,37,0); } 100% { box-shadow: 0 0 0 0 rgba(217,48,37,0); } }
+  #micHint { font-size: 13px; color: var(--sub); margin-top: 10px; min-height: 20px; text-align: center; }
+  #micHint.err { color: var(--red); }
+  .zh-box { position: relative; margin-top: 10px; }
+  #zhInput { width: 100%; min-height: 96px; border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 12px; font-size: 16px; font-family: inherit; resize: vertical; line-height: 1.6; }
+  #zhInput:focus { outline: none; border-color: var(--c); }
+  #interim { color: #9aa3b0; font-size: 15px; min-height: 0; padding: 2px 4px; }
+  .actions { display: flex; gap: 8px; margin-top: 10px; }
+  .btn { border: none; border-radius: 10px; padding: 10px 14px; font-size: 15px; font-family: inherit; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+  .btn.pri { background: var(--c); color: #fff; flex: 1; font-weight: 600; }
+  .btn.pri:disabled { background: #9db6de; }
+  .btn.ghost { background: #eef1f5; color: var(--txt); }
+  .btn.sm { padding: 6px 10px; font-size: 13px; border-radius: 8px; }
+  .auto { font-size: 13px; color: var(--sub); display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+
+  /* 結果 */
+  #result { display: none; }
+  .understood { font-size: 13px; color: var(--sub); background: #f7f8fa; border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; }
+  .native { font-size: 21px; line-height: 1.45; font-weight: 600; color: #0f2d5c; margin: 2px 0 10px; }
+  .tools { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tool { border: 1px solid var(--line); background: #fff; border-radius: 20px; padding: 5px 12px; font-size: 13px; cursor: pointer; font-family: inherit; color: var(--txt); }
+  .tool:active { background: var(--c2); }
+  .tool.on { background: #fff6d6; border-color: #f0c64a; }
+  .sec { margin-top: 16px; }
+  .sec h3 { font-size: 13px; color: var(--sub); margin: 0 0 8px; font-weight: 600; }
+  .alt { display: flex; gap: 8px; align-items: flex-start; padding: 8px 0; border-top: 1px solid #f0f2f5; }
+  .alt:first-of-type { border-top: none; }
+  .tag { font-size: 11px; background: var(--c2); color: var(--c); border-radius: 6px; padding: 2px 7px; white-space: nowrap; margin-top: 3px; }
+  .alt .en { flex: 1; font-size: 16px; }
+  .say { border: none; background: none; font-size: 18px; cursor: pointer; padding: 0 4px; }
+  .phrase { padding: 7px 0; border-top: 1px solid #f0f2f5; }
+  .phrase:first-of-type { border-top: none; }
+  .phrase b { color: #0f2d5c; }
+  .phrase div { font-size: 13px; color: var(--sub); }
+  .avoid { padding: 7px 0; font-size: 14px; }
+  .avoid s { color: var(--red); }
+  .avoid div { font-size: 13px; color: var(--sub); }
+  .tweak { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); }
+  .loading { text-align: center; color: var(--sub); padding: 18px 0; }
+  .spin { display: inline-block; width: 18px; height: 18px; border: 2.5px solid #c9d6ec; border-top-color: var(--c); border-radius: 50%; animation: sp .8s linear infinite; vertical-align: -4px; margin-right: 6px; }
+  @keyframes sp { to { transform: rotate(360deg); } }
+
+  /* 紀錄 */
+  .hist-head { display: flex; align-items: center; gap: 8px; margin: 18px 4px 8px; }
+  .hist-head h2 { font-size: 15px; margin: 0; flex: 1; }
+  #search { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; font-size: 14px; font-family: inherit; margin-bottom: 8px; background: #fff; }
+  .item { background: #fff; border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,.05); cursor: pointer; }
+  .item .en { font-size: 15px; font-weight: 600; color: #0f2d5c; }
+  .item .zh { font-size: 13px; color: var(--sub); margin-top: 2px; }
+  .item .meta { font-size: 11px; color: #a0a7b2; margin-top: 4px; display: flex; gap: 8px; align-items: center; }
+  .item .meta .sp { flex: 1; }
+  .empty { text-align: center; color: var(--sub); font-size: 14px; padding: 24px 0; }
+
+  /* 選單、視窗 */
+  #menu { position: fixed; top: calc(52px + env(safe-area-inset-top)); right: 10px; background: #fff; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.18); z-index: 30; display: none; min-width: 220px; overflow: hidden; }
+  #menu button { display: block; width: 100%; text-align: left; border: none; background: none; padding: 12px 16px; font-size: 14px; font-family: inherit; cursor: pointer; color: var(--txt); }
+  #menu button:active { background: #f2f4f7; }
+  #menu hr { border: none; border-top: 1px solid #eee; margin: 0; }
+  .modal { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 40; display: none; align-items: flex-end; justify-content: center; }
+  .modal.show { display: flex; }
+  .sheet { background: #fff; width: 100%; max-width: 560px; border-radius: 18px 18px 0 0; padding: 18px 16px calc(18px + env(safe-area-inset-bottom)); max-height: 88vh; overflow-y: auto; }
+  .sheet h2 { font-size: 17px; margin: 0 0 4px; }
+  .sheet p.note { font-size: 13px; color: var(--sub); margin: 0 0 14px; }
+  .ks { border: 1px solid var(--line); border-radius: 12px; padding: 10px; margin-bottom: 10px; }
+  .ks-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 14px; }
+  .ks-head .t { font-size: 11px; color: var(--sub); flex: 1; }
+  .ks-head a { font-size: 12px; color: var(--c); text-decoration: none; }
+  .ks-in { display: flex; gap: 6px; }
+  .ks-in input { flex: 1; min-width: 0; height: 36px; border: 1px solid #dadce0; border-radius: 8px; padding: 0 10px; font-size: 13px; font-family: monospace; }
+  .ks-msg { font-size: 12px; margin-top: 6px; min-height: 16px; }
+  .set-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 0; border-top: 1px solid #f0f2f5; font-size: 14px; flex-wrap: wrap; }
+  .set-row select, .set-row input[type=range] { font-size: 14px; }
+  .set-row select { max-width: 60%; border: 1px solid var(--line); border-radius: 8px; padding: 5px; font-family: inherit; }
+  #toast { position: fixed; bottom: calc(24px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); background: #323232; color: #fff; padding: 9px 16px; border-radius: 20px; font-size: 14px; z-index: 60; display: none; max-width: 90vw; text-align: center; }
+  .banner { background: #fff4e5; color: #8a5300; font-size: 13px; padding: 10px 12px; border-radius: 10px; margin-bottom: 12px; display: none; }
+  .banner button { margin-left: 6px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🗣️ 道地口說轉譯器<span class="ver">v1.0</span></h1>
+  <button class="icon-btn" id="menuBtn" aria-label="選單">⋮</button>
+</header>
+<div id="menu">
+  <button data-act="keys">🔑 AI 金鑰設定</button>
+  <button data-act="settings">⚙️ 轉譯與朗讀設定</button>
+  <hr>
+  <button data-act="share">☁️ 備份到 Google Drive</button>
+  <button data-act="download">📥 下載備份檔到手機</button>
+  <button data-act="restore">📂 從備份檔還原</button>
+  <hr>
+  <button data-act="clearAll">🗑️ 清除全部紀錄</button>
+</div>
+
+<main>
+  <div class="banner" id="keyBanner">還沒設定 AI 金鑰，無法轉成英文。<button class="btn sm ghost" data-act="keys">設定金鑰</button></div>
+  <div class="banner" id="backupBanner">已經超過 7 天沒有備份了。<button class="btn sm ghost" data-act="share">立即備份</button></div>
+
+  <section class="card">
+    <div class="row" style="justify-content: space-between; margin-bottom: 6px;">
+      <div class="seg" id="segTone">
+        <button data-v="friend">朋友閒聊</button>
+        <button data-v="work">同事日常</button>
+        <button data-v="polite">禮貌一點</button>
+      </div>
+      <div class="seg" id="segAccent">
+        <button data-v="US">美式</button>
+        <button data-v="UK">英式</button>
+      </div>
+    </div>
+
+    <div class="mic-wrap">
+      <button id="micBtn" aria-label="開始錄音">🎤</button>
+      <div id="micHint">按一下開始說中文，說完再按一下</div>
+    </div>
+
+    <div class="zh-box">
+      <textarea id="zhInput" placeholder="語音辨識的中文會出現在這裡，有錯字可以直接用鍵盤修改；也可以直接打字。"></textarea>
+      <div id="interim"></div>
+    </div>
+    <div class="actions">
+      <button class="btn ghost" id="clearBtn" title="清空">✕ 清空</button>
+      <button class="btn pri" id="goBtn">✨ 轉成道地英文</button>
+    </div>
+    <label class="auto"><input type="checkbox" id="autoGo"> 說完自動轉譯（關掉的話可以先改字再按）</label>
+  </section>
+
+  <section class="card" id="result"></section>
+
+  <div class="hist-head">
+    <h2>📒 我的口說紀錄 <span id="histCount" style="font-weight:400;color:var(--sub);font-size:13px"></span></h2>
+    <div class="seg" id="segFilter">
+      <button data-v="all" class="on">全部</button>
+      <button data-v="star">⭐ 收藏</button>
+    </div>
+  </div>
+  <input id="search" type="search" placeholder="🔍 搜尋中文或英文">
+  <div id="hist"></div>
+</main>
+
+<!-- 金鑰設定 -->
+<div class="modal" id="keysModal">
+  <div class="sheet">
+    <h2>🔑 AI 金鑰設定</h2>
+    <p class="note">至少填一組。會依 Groq → Free.ai → Gemini 的順序使用，一家失敗就換下一家。<br>若這個 App 和「英語學習筆記本」放在同一個網站（chahan1.github.io），金鑰會自動共用。</p>
+    <div class="ks" data-p="groq">
+      <div class="ks-head"><b>Groq</b><span class="t">首選・免費・速度最快</span><a href="https://console.groq.com/keys" target="_blank" rel="noopener">申請 ›</a></div>
+      <div class="ks-in"><input type="password" placeholder="gsk_..." autocomplete="off"><button class="btn sm ghost" data-test>測試</button></div>
+      <div class="ks-msg"></div>
+    </div>
+    <div class="ks" data-p="freeai">
+      <div class="ks-head"><b>Free.ai</b><span class="t">免費・備用</span><a href="https://free.ai" target="_blank" rel="noopener">申請 ›</a></div>
+      <div class="ks-in"><input type="password" placeholder="Free.ai API key" autocomplete="off"><button class="btn sm ghost" data-test>測試</button></div>
+      <div class="ks-msg"></div>
+    </div>
+    <div class="ks" data-p="gemini">
+      <div class="ks-head"><b>Gemini</b><span class="t">備用・學校帳號可能不能用</span><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">申請 ›</a></div>
+      <div class="ks-in"><input type="password" placeholder="AIza..." autocomplete="off"><button class="btn sm ghost" data-test>測試</button></div>
+      <div class="ks-msg"></div>
+    </div>
+    <div class="actions"><button class="btn ghost" data-close>取消</button><button class="btn pri" id="saveKeys">儲存</button></div>
+  </div>
+</div>
+
+<!-- 設定 -->
+<div class="modal" id="setModal">
+  <div class="sheet">
+    <h2>⚙️ 轉譯與朗讀設定</h2>
+    <div class="set-row">語音辨識語言
+      <select id="setLang">
+        <option value="zh-TW">中文（台灣）</option>
+        <option value="cmn-Hans-CN">中文（中國大陸）</option>
+        <option value="yue-Hant-HK">粵語（香港）</option>
+      </select>
+    </div>
+    <div class="set-row">說明文字
+      <select id="setScript">
+        <option value="繁體中文">繁體中文</option>
+        <option value="简体中文">简体中文</option>
+      </select>
+    </div>
+    <div class="set-row">朗讀聲音
+      <select id="setVoice"></select>
+    </div>
+    <div class="set-row">朗讀語速 <span><input type="range" id="setRate" min="0.6" max="1.3" step="0.05"> <span id="rateVal"></span></span></div>
+    <div class="set-row">轉譯後自動朗讀 <input type="checkbox" id="setAutoSpeak"></div>
+    <div class="actions"><button class="btn ghost" id="testVoice">🔊 試聽</button><button class="btn pri" data-close>完成</button></div>
+  </div>
+</div>
+
+<input type="file" id="fileIn" accept=".json,.txt,application/json,text/plain" style="display:none">
+<div id="toast"></div>
+
+<script>
+'use strict';
+const VERSION = '1.0';
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function toast(msg, ms = 2200) { const t = $('#toast'); t.textContent = msg; t.style.display = 'block'; clearTimeout(toast._t); toast._t = setTimeout(() => t.style.display = 'none', ms); }
+
+// ================= 資料 =================
+const HIST_KEY = 'speak_history_v1', SET_KEY = 'speak_settings_v1', BACKUP_KEY = 'speak_last_backup';
+let hist = [];
+try { hist = JSON.parse(localStorage.getItem(HIST_KEY)) || []; } catch (e) { hist = []; }
+const settings = Object.assign({ tone: 'friend', accent: 'US', lang: 'zh-TW', script: '繁體中文', voice: '', rate: 0.95, autoSpeak: false, autoGo: true }, (() => { try { return JSON.parse(localStorage.getItem(SET_KEY)) || {}; } catch (e) { return {}; } })());
+const saveHist = () => localStorage.setItem(HIST_KEY, JSON.stringify(hist));
+const saveSet = () => localStorage.setItem(SET_KEY, JSON.stringify(settings));
+const TONE_NAME = { friend: '朋友閒聊', work: '同事日常', polite: '禮貌一點' };
+
+// ================= AI（與英語學習筆記本共用金鑰名稱）=================
+const KEY_STORE = { gemini: 'user_gemini_api_key', groq: 'user_groq_api_key', freeai: 'user_freeai_api_key' };
+const PROVIDER_NAME = { groq: 'Groq', freeai: 'Free.ai', gemini: 'Gemini' };
+const TEXT_ORDER = ['groq', 'freeai', 'gemini'];
+const getKey = p => (localStorage.getItem(KEY_STORE[p]) || '').trim();
+const hasKey = () => TEXT_ORDER.some(p => getKey(p));
+const GROQ_MODELS = ['openai/gpt-oss-120b', 'llama-3.3-70b-versatile'];
+const GEMINI_MODELS = ['gemini-flash-latest', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.1-flash-lite'];
+const FREEAI_BASE = 'https://api.free.ai';
+const FREEAI_CHAT_MODELS = ['qwen7b'];
+const SYS_PROMPT = 'You are an expert bilingual speaking coach (Mandarin Chinese and natural spoken English). Reply with JSON only, no extra text.';
+
+function classifyError(err) {
+  if (!navigator.onLine || err instanceof TypeError) return 'offline';
+  if (err && (err.status === 401 || err.status === 403 || (err.status === 400 && /api key/i.test(err.message)))) return 'key';
+  if (err && err.status === 429) return 'quota';
+  return 'other';
+}
+function extractJSON(text) {
+  const t = String(text || '').replace(/```json|```/g, '');
+  const i = t.indexOf('{'), j = t.lastIndexOf('}');
+  if (i < 0 || j < i) throw new Error('AI 回傳的格式不正確');
+  return JSON.parse(t.slice(i, j + 1));
+}
+async function postBearer(url, key, body) {
+  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key }, body: JSON.stringify(body) });
+  if (!res.ok) {
+    let msg = `HTTP ${res.status}`;
+    try { const j = await res.json(); msg = j.error?.message || j.detail || j.message || msg; if (typeof msg !== 'string') msg = JSON.stringify(msg); } catch (e) {}
+    const err = new Error(msg); err.status = res.status; throw err;
+  }
+  return res;
+}
+const chatText = j => j?.choices?.[0]?.message?.content ?? j?.choices?.[0]?.text ?? j?.message?.content ?? j?.content ?? j?.response ?? j?.output ?? j?.result ?? '';
+
+async function chatGroq(prompt, key = getKey('groq')) {
+  let last = null;
+  for (const model of GROQ_MODELS) {
+    try {
+      const res = await postBearer('https://api.groq.com/openai/v1/chat/completions', key, {
+        model, temperature: 0.6, response_format: { type: 'json_object' },
+        messages: [{ role: 'system', content: SYS_PROMPT }, { role: 'user', content: prompt }]
+      });
+      return extractJSON(chatText(await res.json()));
+    } catch (e) { last = e; const k = classifyError(e); if (k === 'key' || k === 'offline') break; }
+  }
+  throw last;
+}
+async function chatFreeAI(prompt, key = getKey('freeai')) {
+  let last = null;
+  for (const path of ['/v1/chat/completions', '/v1/chat/']) {
+    for (const model of FREEAI_CHAT_MODELS) {
+      try {
+        const res = await postBearer(FREEAI_BASE + path, key, { model, temperature: 0.6, messages: [{ role: 'system', content: SYS_PROMPT }, { role: 'user', content: prompt }] });
+        const ct = res.headers.get('content-type') || '';
+        return extractJSON(ct.includes('json') ? chatText(await res.json()) : await res.text());
+      } catch (e) { last = e; const k = classifyError(e); if (k === 'key' || k === 'offline') throw e; }
+    }
+  }
+  throw last;
+}
+async function chatGemini(prompt, key = getKey('gemini')) {
+  let last = null;
+  for (const model of GEMINI_MODELS) {
+    try {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+        body: JSON.stringify({ systemInstruction: { parts: [{ text: SYS_PROMPT }] }, contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: 'application/json', temperature: 0.6 } })
+      });
+      if (!res.ok) { let msg = `HTTP ${res.status}`; try { msg = (await res.json()).error?.message || msg; } catch (e) {} const er = new Error(msg); er.status = res.status; throw er; }
+      const data = await res.json();
+      return extractJSON(data?.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '');
+    } catch (e) { last = e; const k = classifyError(e); if (k === 'key' || k === 'offline' || k === 'quota') break; }
+  }
+  throw last;
+}
+const CHAT = { groq: chatGroq, freeai: chatFreeAI, gemini: chatGemini };
+
+async function aiJSON(prompt) {
+  const order = TEXT_ORDER.filter(p => getKey(p));
+  if (!order.length) { const e = new Error('尚未設定任何 AI 金鑰'); e.kind = 'key'; throw e; }
+  if (!navigator.onLine) { const e = new Error('目前沒有網路'); e.kind = 'offline'; throw e; }
+  const errs = [];
+  for (const p of order) {
+    try { const r = await CHAT[p](prompt); r._provider = p; return r; }
+    catch (e) {
+      if (e instanceof TypeError && navigator.onLine) e.message = '無法連線（網路不穩，或此服務不允許網頁直接連線）';
+      e.provider = p; errs.push(e);
+      if (!navigator.onLine) break;
+    }
+  }
+  const e = new Error(errs.map(x => `${PROVIDER_NAME[x.provider]}：${x.message}`).join('；'));
+  e.kind = errs.map(classifyError).includes('quota') ? 'quota' : 'other';
+  throw e;
+}
+
+// ================= 轉譯提示詞 =================
+const TONE_DESC = {
+  friend: 'a relaxed, casual chat with a close friend (very colloquial, contractions, casual slang is OK if common)',
+  work: 'friendly everyday small talk with a coworker (natural and casual, but nothing rude or too slangy)',
+  polite: 'a polite but still natural spoken conversation, e.g. with a client, a teacher or someone you just met (warm, not stiff, not written-style)'
+};
+function buildPrompt(zh, extra) {
+  const accent = settings.accent === 'UK' ? 'British' : 'American';
+  const sc = settings.script;
+  return `The user is a native Chinese speaker practicing spoken English. Below is what they SAID in Chinese, captured by speech recognition. It may contain recognition errors (wrong homophones), filler words (呃、那個、就是、然後), repetitions or self-corrections.
+
+Chinese speech:
+"""${zh}"""
+
+Your job:
+1. Work out what they actually MEAN (fix obvious recognition errors from context).
+2. Say it the way a native ${accent} English speaker would naturally SAY it out loud in ${TONE_DESC[settings.tone]}.
+
+Rules:
+- Translate the meaning and intent, never word by word. No Chinglish, no textbook or written style.
+- Sound like real speech: contractions, phrasal verbs, everyday chunks (e.g. "I'm swamped", "no worries", "sounds good", "I'm down"), short speakable sentences.
+- Use idioms or slang only if a native speaker would genuinely use them in this situation.
+- Keep the speaker's attitude and feeling (complaining, excited, joking, hesitant, apologetic...).
+- Drop Chinese fillers; don't invent facts that aren't in the original.
+- Use ${accent} vocabulary and spelling.${extra ? '\n- EXTRA INSTRUCTION: ' + extra : ''}
+
+Return JSON only, in exactly this shape (all explanations in ${sc}):
+{
+  "understood": "整理後的中文原意（${sc}，修正辨識錯字、去掉贅字）",
+  "native": "the single best natural spoken English version",
+  "alternatives": [
+    {"label": "更隨性", "en": "a more casual / slangy way to say it"},
+    {"label": "比較客氣", "en": "a slightly more polite way to say it"}
+  ],
+  "phrases": [
+    {"en": "a key native expression used above", "zh": "意思與使用時機（${sc}，一句話）"}
+  ],
+  "avoid": [
+    {"chinglish": "a literal translation a Chinese speaker would likely say", "why": "為什麼聽起來不道地（${sc}，一句話）"}
+  ]
+}
+Give 2-4 phrases and 0-2 avoid items (only when there is a typical Chinglish trap).`;
+}
+
+// ================= 語音辨識 =================
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const micBtn = $('#micBtn'), micHint = $('#micHint'), zhInput = $('#zhInput'), interimEl = $('#interim');
+let rec = null, recording = false, wantStop = false, baseText = '', sessionFinal = '';
+function hint(msg, err) { micHint.textContent = msg; micHint.classList.toggle('err', !!err); }
+
+function startRec() {
+  if (!SR) { hint('這個瀏覽器不支援語音辨識，請用 Chrome 開啟，或直接打字', true); zhInput.focus(); return; }
+  if (!navigator.onLine) { hint('語音辨識需要網路，現在請先用鍵盤輸入', true); zhInput.focus(); return; }
+  speechSynthesis.cancel();
+  rec = new SR();
+  rec.lang = settings.lang; rec.continuous = true; rec.interimResults = true;
+  baseText = zhInput.value.trim(); sessionFinal = ''; wantStop = false;
+  rec.onresult = e => {
+    let interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const r = e.results[i];
+      if (r.isFinal) sessionFinal += r[0].transcript; else interim += r[0].transcript;
+    }
+    zhInput.value = joinZh(baseText, sessionFinal);
+    interimEl.textContent = interim;
+  };
+  rec.onerror = e => {
+    if (e.error === 'no-speech' || e.error === 'aborted') return;
+    wantStop = true;
+    hint(e.error === 'not-allowed' ? '沒有麥克風權限：請允許麥克風（需在 https 網址下使用）' : e.error === 'network' ? '語音辨識連不上網路，請改用鍵盤輸入' : '語音錯誤：' + e.error, true);
+  };
+  rec.onend = () => {
+    // Android 的 Chrome 常會自己停掉，還沒按停止就自動接續
+    if (!wantStop && recording) { baseText = zhInput.value.trim(); sessionFinal = ''; try { rec.start(); return; } catch (e) {} }
+    finishRec();
+  };
+  try { rec.start(); } catch (e) { hint('語音啟動失敗，請再按一次', true); return; }
+  recording = true; micBtn.classList.add('rec'); micBtn.textContent = '■';
+  hint('🎙️ 聆聽中…說完再按一下停止');
+}
+function joinZh(a, b) { if (!a) return b.trim(); if (!b) return a; return a + (/[，。！？,.!?]$/.test(a) ? '' : '，') + b.trim(); }
+function stopRec() { wantStop = true; try { rec && rec.stop(); } catch (e) { finishRec(); } }
+function finishRec() {
+  const was = recording;
+  recording = false; micBtn.classList.remove('rec'); micBtn.textContent = '🎤';
+  if (interimEl.textContent) { zhInput.value = joinZh(zhInput.value.trim(), interimEl.textContent); interimEl.textContent = ''; }
+  if (!was) return;
+  if (!micHint.classList.contains('err')) hint(zhInput.value.trim() ? '辨識完成，有錯字可以直接修改' : '沒有聽到內容，請再試一次', !zhInput.value.trim());
+  if (zhInput.value.trim() && settings.autoGo && !micHint.classList.contains('err')) doTranslate();
+}
+micBtn.onclick = () => recording ? stopRec() : startRec();
+
+// ================= 轉譯 =================
+let current = null, busy = false;
+async function doTranslate(extra, label) {
+  const zh = zhInput.value.trim();
+  if (!zh) { toast('請先說話或輸入中文'); return; }
+  if (!hasKey()) { openKeys(); toast('請先設定 AI 金鑰'); return; }
+  if (busy) return;
+  busy = true; $('#goBtn').disabled = true;
+  const box = $('#result'); box.style.display = 'block';
+  box.innerHTML = `<div class="loading"><span class="spin"></span>${label ? '正在改成「' + esc(label) + '」…' : '正在想母語人士會怎麼說…'}</div>`;
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  try {
+    const r = await aiJSON(buildPrompt(zh, extra));
+    if (!r.native) throw new Error('AI 沒有給出英文');
+    const entry = {
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ts: Date.now(), zh,
+      understood: r.understood || '', native: String(r.native).trim(),
+      alternatives: (r.alternatives || []).filter(a => a && a.en).slice(0, 3),
+      phrases: (r.phrases || []).filter(p => p && p.en).slice(0, 5),
+      avoid: (r.avoid || []).filter(a => a && a.chinglish).slice(0, 3),
+      tone: settings.tone, accent: settings.accent, star: false, provider: r._provider
+    };
+    // 同一段中文重新微調時，取代上一筆，避免紀錄重複
+    if (current && current.zh === zh && hist[0] && hist[0].id === current.id) { entry.star = current.star; hist[0] = entry; }
+    else hist.unshift(entry);
+    saveHist(); current = entry;
+    renderResult(entry); renderHistory();
+    if (settings.autoSpeak) speak(entry.native);
+  } catch (e) {
+    box.innerHTML = `<div class="loading" style="color:var(--red)">轉譯失敗：${esc(e.message)}<br><button class="btn sm ghost" style="margin-top:10px" onclick="doTranslate()">再試一次</button></div>`;
+  } finally { busy = false; $('#goBtn').disabled = false; }
+}
+
+function renderResult(en) {
+  const box = $('#result'); box.style.display = 'block';
+  const alts = en.alternatives.map(a => `<div class="alt"><span class="tag">${esc(a.label || '其他說法')}</span><span class="en">${esc(a.en)}</span><button class="say" data-say="${esc(a.en)}">🔊</button></div>`).join('');
+  const phr = en.phrases.map(p => `<div class="phrase"><b>${esc(p.en)}</b><div>${esc(p.zh)}</div></div>`).join('');
+  const av = en.avoid.map(a => `<div class="avoid">❌ <s>${esc(a.chinglish)}</s><div>${esc(a.why)}</div></div>`).join('');
+  box.innerHTML = `
+    ${en.understood ? `<div class="understood">🧠 你的意思：${esc(en.understood)}</div>` : ''}
+    <div class="native" id="nativeText">${esc(en.native)}</div>
+    <div class="tools">
+      <button class="tool" data-say="${esc(en.native)}">🔊 聽</button>
+      <button class="tool" data-slow="${esc(en.native)}">🐢 慢速</button>
+      <button class="tool" data-copy="${esc(en.native)}">📋 複製</button>
+      <button class="tool ${en.star ? 'on' : ''}" data-star="${en.id}">${en.star ? '⭐ 已收藏' : '☆ 收藏'}</button>
+    </div>
+    ${alts ? `<div class="sec"><h3>💬 其他說法</h3>${alts}</div>` : ''}
+    ${phr ? `<div class="sec"><h3>🔑 道地用語</h3>${phr}</div>` : ''}
+    ${av ? `<div class="sec"><h3>⚠️ 中式英文陷阱</h3>${av}</div>` : ''}
+    <div class="tweak">
+      <button class="tool" data-tweak="casual">😎 再口語一點</button>
+      <button class="tool" data-tweak="polite">🙂 客氣一點</button>
+      <button class="tool" data-tweak="short">✂️ 更簡短</button>
+      <button class="tool" data-tweak="again">🔄 換個說法</button>
+    </div>`;
+}
+const TWEAKS = {
+  casual: ['再口語一點', 'Make "native" even more casual and slangy, like texting or chatting with a close friend.'],
+  polite: ['客氣一點', 'Make "native" a bit more polite and considerate, but still natural spoken English.'],
+  short: ['更簡短', 'Make "native" as short and punchy as a native speaker would say it in real life.'],
+  again: ['換個說法', 'Give a DIFFERENT natural way of saying it than the most obvious one.']
+};
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-say],[data-slow],[data-copy],[data-star],[data-tweak],[data-act],[data-close]');
+  if (!t) return;
+  if (t.dataset.say !== undefined) { e.stopPropagation(); speak(t.dataset.say); }
+  else if (t.dataset.slow !== undefined) speak(t.dataset.slow, 0.7);
+  else if (t.dataset.copy !== undefined) copyText(t.dataset.copy);
+  else if (t.dataset.star) { e.stopPropagation(); toggleStar(t.dataset.star); }
+  else if (t.dataset.tweak) { const [l, x] = TWEAKS[t.dataset.tweak]; if (current) zhInput.value = current.zh; doTranslate(x, l); }
+  else if (t.dataset.act) { $('#menu').style.display = 'none'; doAct(t.dataset.act); }
+  else if (t.dataset.close !== undefined) t.closest('.modal').classList.remove('show');
+});
+async function copyText(s) {
+  try { await navigator.clipboard.writeText(s); toast('已複製'); }
+  catch (e) { const ta = document.createElement('textarea'); ta.value = s; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); toast('已複製'); }
+}
+function toggleStar(id) {
+  const it = hist.find(h => h.id === id); if (!it) return;
+  it.star = !it.star; saveHist();
+  if (current && current.id === id) { current.star = it.star; renderResult(current); }
+  renderHistory(); toast(it.star ? '已加入收藏' : '已取消收藏');
+}
+
+// ================= 朗讀 =================
+let voices = [];
+function loadVoices() {
+  voices = speechSynthesis.getVoices().filter(v => /^en[-_]/i.test(v.lang));
+  const sel = $('#setVoice'); if (!sel) return;
+  const rank = v => (/google|natural|neural|enhanced|premium|siri/i.test(v.name) ? 0 : 1) + (v.lang.replace('_', '-').startsWith(settings.accent === 'UK' ? 'en-GB' : 'en-US') ? 0 : 2);
+  voices.sort((a, b) => rank(a) - rank(b));
+  sel.innerHTML = '<option value="">自動選擇（依美式／英式）</option>' + voices.map(v => `<option value="${esc(v.name)}">${esc(v.name)} (${v.lang})</option>`).join('');
+  sel.value = settings.voice;
+}
+if ('speechSynthesis' in window) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+function pickVoice() {
+  if (settings.voice) { const v = voices.find(x => x.name === settings.voice); if (v) return v; }
+  const want = settings.accent === 'UK' ? 'en-GB' : 'en-US';
+  return voices.find(v => v.lang.replace('_', '-') === want && /google|natural|neural|enhanced|premium/i.test(v.name)) || voices.find(v => v.lang.replace('_', '-') === want) || voices[0];
+}
+function speak(text, rate) {
+  if (!('speechSynthesis' in window)) { toast('這個瀏覽器不支援朗讀'); return; }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  const v = pickVoice(); if (v) { u.voice = v; u.lang = v.lang; } else u.lang = settings.accent === 'UK' ? 'en-GB' : 'en-US';
+  u.rate = rate || settings.rate;
+  speechSynthesis.speak(u);
+}
+
+// ================= 紀錄 =================
+let filter = 'all';
+function fmtTime(ts) { const d = new Date(ts), n = new Date(); const p = x => String(x).padStart(2, '0'); const t = `${p(d.getHours())}:${p(d.getMinutes())}`; return d.toDateString() === n.toDateString() ? '今天 ' + t : `${d.getMonth() + 1}/${d.getDate()} ${t}`; }
+function renderHistory() {
+  const q = $('#search').value.trim().toLowerCase();
+  const list = hist.filter(h => (filter === 'all' || h.star) && (!q || (h.zh + ' ' + h.native + ' ' + (h.understood || '')).toLowerCase().includes(q)));
+  $('#histCount').textContent = hist.length ? `(${hist.length})` : '';
+  $('#hist').innerHTML = list.length ? list.map(h => `
+    <div class="item" data-open="${h.id}">
+      <div class="en">${esc(h.native)}</div>
+      <div class="zh">${esc(h.zh)}</div>
+      <div class="meta"><span>${fmtTime(h.ts)}・${TONE_NAME[h.tone] || ''}</span><span class="sp"></span>
+        <button class="say" data-say="${esc(h.native)}">🔊</button>
+        <button class="say" data-star="${h.id}">${h.star ? '⭐' : '☆'}</button>
+        <button class="say" data-del="${h.id}">🗑️</button></div>
+    </div>`).join('') : `<div class="empty">${hist.length ? '找不到符合的紀錄' : '還沒有紀錄。按上面的 🎤 說一句中文試試看！'}</div>`;
+}
+$('#hist').addEventListener('click', e => {
+  const del = e.target.closest('[data-del]');
+  if (del) { e.stopPropagation(); if (confirm('刪除這筆紀錄？')) { hist = hist.filter(h => h.id !== del.dataset.del); saveHist(); renderHistory(); } return; }
+  const it = e.target.closest('[data-open]'); if (!it || e.target.closest('button')) return;
+  const h = hist.find(x => x.id === it.dataset.open); if (!h) return;
+  current = h; zhInput.value = h.zh; renderResult(h);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+$('#search').oninput = renderHistory;
+function bindSeg(id, get, set) {
+  const el = $(id);
+  const sync = () => el.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.v === get()));
+  el.onclick = e => { const b = e.target.closest('button'); if (!b) return; set(b.dataset.v); sync(); };
+  sync();
+}
+bindSeg('#segTone', () => settings.tone, v => { settings.tone = v; saveSet(); });
+bindSeg('#segAccent', () => settings.accent, v => { settings.accent = v; saveSet(); loadVoices(); });
+bindSeg('#segFilter', () => filter, v => { filter = v; renderHistory(); });
+
+// ================= 選單、金鑰、設定 =================
+$('#menuBtn').onclick = e => { e.stopPropagation(); const m = $('#menu'); m.style.display = m.style.display === 'block' ? 'none' : 'block'; };
+document.addEventListener('click', e => { if (!e.target.closest('#menu') && !e.target.closest('#menuBtn')) $('#menu').style.display = 'none'; });
+document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('show'); }));
+
+function openKeys() {
+  document.querySelectorAll('#keysModal .ks').forEach(b => { b.querySelector('input').value = getKey(b.dataset.p); b.querySelector('.ks-msg').textContent = ''; });
+  $('#keysModal').classList.add('show');
+}
+$('#saveKeys').onclick = () => {
+  document.querySelectorAll('#keysModal .ks').forEach(b => { const v = b.querySelector('input').value.trim(); v ? localStorage.setItem(KEY_STORE[b.dataset.p], v) : localStorage.removeItem(KEY_STORE[b.dataset.p]); });
+  $('#keysModal').classList.remove('show'); updateBanners(); toast('金鑰已儲存');
+};
+document.querySelectorAll('#keysModal [data-test]').forEach(btn => btn.onclick = async () => {
+  const b = btn.closest('.ks'), p = b.dataset.p, key = b.querySelector('input').value.trim(), msg = b.querySelector('.ks-msg');
+  if (!key) { msg.style.color = 'var(--red)'; msg.textContent = '請先輸入金鑰'; return; }
+  msg.style.color = 'var(--sub)'; msg.textContent = '測試中…';
+  try {
+    const r = await CHAT[p]('Reply with JSON: {"native": "Sounds good!"}', key);
+    msg.style.color = 'var(--green)'; msg.textContent = '✅ 可以使用' + (r.native ? '（' + r.native + '）' : '');
+  } catch (e) {
+    msg.style.color = 'var(--red)';
+    msg.textContent = '❌ ' + (e instanceof TypeError ? '無法連線（此服務可能不允許網頁直接連線）' : e.message);
+  }
+});
+
+function openSettings() {
+  loadVoices();
+  $('#setLang').value = settings.lang; $('#setScript').value = settings.script; $('#setRate').value = settings.rate;
+  $('#rateVal').textContent = settings.rate + 'x'; $('#setAutoSpeak').checked = settings.autoSpeak;
+  $('#setModal').classList.add('show');
+}
+$('#setLang').onchange = e => { settings.lang = e.target.value; saveSet(); };
+$('#setScript').onchange = e => { settings.script = e.target.value; saveSet(); };
+$('#setVoice').onchange = e => { settings.voice = e.target.value; saveSet(); };
+$('#setRate').oninput = e => { settings.rate = +e.target.value; $('#rateVal').textContent = settings.rate + 'x'; saveSet(); };
+$('#setAutoSpeak').onchange = e => { settings.autoSpeak = e.target.checked; saveSet(); };
+$('#testVoice').onclick = () => speak("Hey! No worries, I'm totally down for that.");
+$('#autoGo').checked = settings.autoGo;
+$('#autoGo').onchange = e => { settings.autoGo = e.target.checked; saveSet(); };
+$('#goBtn').onclick = () => { if (recording) { settings.autoGo ? stopRec() : (stopRec(), setTimeout(() => doTranslate(), 400)); } else doTranslate(); };
+$('#clearBtn').onclick = () => { zhInput.value = ''; interimEl.textContent = ''; current = null; $('#result').style.display = 'none'; hint('按一下開始說中文，說完再按一下'); zhInput.focus(); };
+
+// ================= 備份 =================
+function backupData() { return JSON.stringify({ app: 'speak-translator', version: VERSION, exported: new Date().toISOString(), hist, settings }, null, 1); }
+function stamp() { const d = new Date(), p = x => String(x).padStart(2, '0'); return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}`; }
+function markBackup() { localStorage.setItem(BACKUP_KEY, Date.now()); updateBanners(); }
+function downloadFile(name, text, type) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); }
+async function doAct(act) {
+  if (act === 'keys') openKeys();
+  else if (act === 'settings') openSettings();
+  else if (act === 'download') { downloadFile(`口說轉譯備份_${stamp()}.json`, backupData(), 'application/json'); markBackup(); toast('已下載到手機的「下載」資料夾'); }
+  else if (act === 'share') {
+    const file = new File([backupData()], `口說轉譯備份_${stamp()}.txt`, { type: 'text/plain' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: '口說轉譯備份' }); markBackup(); toast('請在分享選單選「雲端硬碟」'); }
+      catch (e) { if (e.name !== 'AbortError') toast('分享失敗：' + e.message); }
+    } else { downloadFile(file.name, backupData(), 'text/plain'); markBackup(); toast('此瀏覽器不支援分享，已改為下載'); }
+  }
+  else if (act === 'restore') $('#fileIn').click();
+  else if (act === 'clearAll') { if (hist.length && confirm(`確定刪除全部 ${hist.length} 筆紀錄？建議先備份。`)) { hist = []; saveHist(); renderHistory(); toast('已清除'); } }
+}
+$('#fileIn').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  try {
+    const d = JSON.parse(await f.text());
+    const list = Array.isArray(d) ? d : d.hist;
+    if (!Array.isArray(list)) throw new Error('不是口說轉譯器的備份檔');
+    const ids = new Set(hist.map(h => h.id)); let n = 0;
+    list.forEach(h => { if (h && h.id && h.native && !ids.has(h.id)) { hist.push(h); n++; } });
+    hist.sort((a, b) => b.ts - a.ts); saveHist(); renderHistory();
+    toast(`已還原 ${n} 筆新紀錄（重複的會略過）`);
+  } catch (err) { toast('還原失敗：' + err.message, 3500); }
+};
+function updateBanners() {
+  $('#keyBanner').style.display = hasKey() ? 'none' : 'block';
+  const last = +localStorage.getItem(BACKUP_KEY) || 0;
+  $('#backupBanner').style.display = hist.length >= 5 && Date.now() - last > 7 * 864e5 ? 'block' : 'none';
+}
+
+// ================= 啟動 =================
+renderHistory(); updateBanners();
+if (!SR) hint('這個瀏覽器不支援語音辨識（請用 Chrome），仍可直接打字');
+zhInput.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) doTranslate(); });
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>
