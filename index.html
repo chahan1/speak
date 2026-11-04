@@ -9,264 +9,415 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
-  :root { --c: #1f5fbf; --c2: #e8f0fc; --bg: #f4f6f9; --line: #e3e6eb; --txt: #1d2330; --sub: #6b7280; --red: #d93025; --green: #107c41; }
+  /* ===== 色彩與字體：取自 App 圖示的「白色中文泡泡＋黃色英文泡泡」 ===== */
+  :root {
+    --bg: #edf1f7;          /* 冷調淺灰藍底 */
+    --card: #ffffff;
+    --ink: #16243d;         /* 深藍黑：主要文字 */
+    --sub: #5d6a7f;         /* 次要文字 */
+    --faint: #94a0b2;
+    --line: #dde3ec;
+    --c: #1f5fbf;           /* 品牌藍 */
+    --c2: #e6eefb;
+    --en: #ffe7a3;          /* 英文泡泡黃 */
+    --en-line: #f0c64a;
+    --en-ink: #10264a;
+    --red: #c8372d; --red2: #fdecea;
+    --green: #1d7a46; --green2: #e3f3e9;
+    --amber2: #fff3d6; --amber: #8a5a00;
+    --serif: 'Noto Serif', 'Source Serif Pro', 'Source Serif 4', Georgia, 'Times New Roman', serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    --tab-h: 62px;
+  }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body { margin: 0; background: var(--bg); color: var(--txt); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans TC', Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.5; }
-  header { position: sticky; top: 0; z-index: 10; background: var(--c); color: #fff; display: flex; align-items: center; gap: 8px; padding: 10px 14px; padding-top: calc(10px + env(safe-area-inset-top)); }
-  header h1 { font-size: 17px; margin: 0; flex: 1; font-weight: 600; }
-  header .ver { font-size: 11px; opacity: .7; font-weight: 400; margin-left: 4px; }
-  .icon-btn { background: none; border: none; color: inherit; font-size: 20px; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; }
+  html { scroll-padding-top: 70px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.55; }
+  button, input, textarea, select { font-family: inherit; color: inherit; }
+  :focus-visible { outline: 2.5px solid var(--c); outline-offset: 2px; }
+  svg.i { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  .serif { font-family: var(--serif); }
+  [hidden] { display: none !important; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+  /* ===== 頂部 ===== */
+  header { position: sticky; top: 0; z-index: 10; background: var(--c); color: #fff; display: flex; align-items: center; gap: 4px; padding: 8px 8px 8px 14px; padding-top: calc(8px + env(safe-area-inset-top)); }
+  .brand { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+  .brand img { width: 30px; height: 30px; border-radius: 8px; box-shadow: 0 0 0 1.5px rgba(255,255,255,.35); }
+  .brand h1 { font-size: 17px; margin: 0; font-weight: 700; letter-spacing: .5px; white-space: nowrap; }
+  .ver { font-size: 11px; opacity: .65; font-weight: 400; margin-left: 6px; letter-spacing: 0; }
+  .icon-btn { background: none; border: none; color: inherit; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: inline-grid; place-items: center; font-size: 20px; }
   .icon-btn:active { background: rgba(255,255,255,.18); }
-  main { max-width: 680px; margin: 0 auto; padding: 12px 12px 90px; }
-  .card { background: #fff; border-radius: 14px; padding: 14px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
-  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-  .seg { display: flex; background: #eef1f5; border-radius: 9px; padding: 3px; gap: 2px; }
-  .seg button { border: none; background: none; padding: 5px 10px; border-radius: 7px; font-size: 13px; color: var(--sub); cursor: pointer; font-family: inherit; }
-  .seg button.on { background: #fff; color: var(--c); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,.1); }
-  .lbl { font-size: 12px; color: var(--sub); margin: 0 0 6px; }
+  #menu { position: fixed; top: calc(54px + env(safe-area-inset-top)); right: 10px; background: #fff; border-radius: 14px; box-shadow: 0 10px 30px rgba(22,36,61,.2); z-index: 30; display: none; min-width: 210px; overflow: hidden; padding: 6px 0; }
+  #menu button { display: block; width: 100%; text-align: left; border: none; background: none; padding: 11px 18px; font-size: 14.5px; cursor: pointer; }
+  #menu button:active { background: #f2f4f8; }
+  #menu hr { border: none; border-top: 1px solid var(--line); margin: 6px 0; }
 
-  /* 錄音區 */
-  .mic-wrap { display: flex; flex-direction: column; align-items: center; padding: 6px 0 2px; }
-  #micBtn { width: 92px; height: 92px; border-radius: 50%; border: none; background: var(--c); color: #fff; font-size: 38px; cursor: pointer; box-shadow: 0 4px 14px rgba(31,95,191,.35); transition: transform .15s; position: relative; }
-  #micBtn:active { transform: scale(.95); }
-  #micBtn.rec { background: var(--red); box-shadow: 0 0 0 0 rgba(217,48,37,.5); animation: pulse 1.4s infinite; }
-  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(217,48,37,.45); } 70% { box-shadow: 0 0 0 22px rgba(217,48,37,0); } 100% { box-shadow: 0 0 0 0 rgba(217,48,37,0); } }
-  #micHint { font-size: 13px; color: var(--sub); margin-top: 10px; min-height: 20px; text-align: center; }
-  #micHint.err { color: var(--red); }
-  .zh-box { position: relative; margin-top: 10px; }
-  #zhInput { width: 100%; min-height: 96px; border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 12px; font-size: 16px; font-family: inherit; resize: vertical; line-height: 1.6; }
-  #zhInput:focus { outline: none; border-color: var(--c); }
-  #interim { color: #9aa3b0; font-size: 15px; min-height: 0; padding: 2px 4px; }
-  .actions { display: flex; gap: 8px; margin-top: 10px; }
-  .btn { border: none; border-radius: 10px; padding: 10px 14px; font-size: 15px; font-family: inherit; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+  main { max-width: 640px; margin: 0 auto; padding: 14px 14px calc(var(--tab-h) + 28px + env(safe-area-inset-bottom)); }
+  body.player-open main { padding-bottom: calc(var(--tab-h) + 250px); }
+  .banner { background: var(--amber2); color: var(--amber); font-size: 13.5px; padding: 10px 12px; border-radius: 12px; margin-bottom: 12px; display: none; }
+  .banner button { margin-left: 6px; }
+
+  /* ===== 共用元件 ===== */
+  .btn { border: none; border-radius: 12px; padding: 11px 16px; font-size: 15px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-weight: 500; }
   .btn.pri { background: var(--c); color: #fff; flex: 1; font-weight: 600; }
-  .btn.pri:disabled { background: #9db6de; }
-  .btn.ghost { background: #eef1f5; color: var(--txt); }
-  .btn.sm { padding: 6px 10px; font-size: 13px; border-radius: 8px; }
-  .auto { font-size: 13px; color: var(--sub); display: flex; align-items: center; gap: 6px; margin-top: 8px; }
-
-  /* 結果 */
-  #result { display: none; }
-  .understood { font-size: 13px; color: var(--sub); background: #f7f8fa; border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; }
-  .native { font-size: 21px; line-height: 1.45; font-weight: 600; color: #0f2d5c; margin: 2px 0 10px; }
+  .btn.pri:disabled { background: #9db3da; }
+  .btn.ghost { background: #e9edf4; color: var(--ink); }
+  .btn.sm { padding: 6px 12px; font-size: 13px; border-radius: 9px; }
+  .btn.big { width: 100%; padding: 15px; font-size: 16px; border-radius: 14px; }
+  .actions { display: flex; gap: 8px; margin-top: 12px; }
+  .seg { display: inline-flex; background: #e3e8f0; border-radius: 10px; padding: 3px; gap: 2px; }
+  .seg button { border: none; background: none; padding: 5px 11px; border-radius: 8px; font-size: 13px; color: var(--sub); cursor: pointer; white-space: nowrap; }
+  .seg button.on { background: #fff; color: var(--c); font-weight: 600; box-shadow: 0 1px 2px rgba(22,36,61,.12); }
+  .lbl { font-size: 12.5px; color: var(--sub); margin: 0 0 6px; }
   .tools { display: flex; gap: 6px; flex-wrap: wrap; }
-  .tool { border: 1px solid var(--line); background: #fff; border-radius: 20px; padding: 5px 12px; font-size: 13px; cursor: pointer; font-family: inherit; color: var(--txt); }
+  .tool { border: 1px solid var(--line); background: #fff; border-radius: 20px; padding: 6px 13px; font-size: 13.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
   .tool:active { background: var(--c2); }
-  .tool.on { background: #fff6d6; border-color: #f0c64a; }
-  .sec { margin-top: 16px; }
-  .sec h3 { font-size: 13px; color: var(--sub); margin: 0 0 8px; font-weight: 600; }
-  .alt { display: flex; gap: 8px; align-items: flex-start; padding: 8px 0; border-top: 1px solid #f0f2f5; }
-  .alt:first-of-type { border-top: none; }
-  .tag { font-size: 11px; background: var(--c2); color: var(--c); border-radius: 6px; padding: 2px 7px; white-space: nowrap; margin-top: 3px; }
-  .alt .en { flex: 1; font-size: 16px; }
-  .say { border: none; background: none; font-size: 18px; cursor: pointer; padding: 0 4px; }
-  .phrase { padding: 7px 0; border-top: 1px solid #f0f2f5; }
-  .phrase:first-of-type { border-top: none; }
-  .phrase b { color: #0f2d5c; }
-  .phrase div { font-size: 13px; color: var(--sub); }
-  .avoid { padding: 7px 0; font-size: 14px; }
-  .avoid s { color: var(--red); }
-  .avoid div { font-size: 13px; color: var(--sub); }
-  .tweak { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); }
-  .loading { text-align: center; color: var(--sub); padding: 18px 0; }
+  .tool.on { background: var(--amber2); border-color: var(--en-line); }
+  .tool:disabled { opacity: .45; }
+  .say { border: none; background: none; cursor: pointer; padding: 6px; border-radius: 50%; color: var(--c); display: inline-grid; place-items: center; vertical-align: middle; }
+  .say:active { background: var(--c2); }
+  .say svg.i { width: 19px; height: 19px; }
+  .loading { text-align: center; color: var(--sub); padding: 22px 0; }
   .spin { display: inline-block; width: 18px; height: 18px; border: 2.5px solid #c9d6ec; border-top-color: var(--c); border-radius: 50%; animation: sp .8s linear infinite; vertical-align: -4px; margin-right: 6px; }
   @keyframes sp { to { transform: rotate(360deg); } }
+  .score { display: inline-block; font-weight: 700; border-radius: 8px; padding: 1px 8px; font-size: 12.5px; margin-left: 4px; font-family: var(--sans); }
+  .score.hi { background: var(--green2); color: var(--green); } .score.mid { background: var(--amber2); color: var(--amber); } .score.lo { background: var(--red2); color: var(--red); }
 
-  /* 紀錄 */
-  .hist-head { display: flex; align-items: center; gap: 8px; margin: 18px 4px 8px; }
-  .hist-head h2 { font-size: 15px; margin: 0; flex: 1; }
-  #search { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; font-size: 14px; font-family: inherit; margin-bottom: 8px; background: #fff; }
-  .item { background: #fff; border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,.05); cursor: pointer; }
-  .item .en { font-size: 15px; font-weight: 600; color: #0f2d5c; }
-  .item .zh { font-size: 13px; color: var(--sub); margin-top: 2px; }
-  .item .meta { font-size: 11px; color: #a0a7b2; margin-top: 4px; display: flex; gap: 8px; align-items: center; }
-  .item .meta .sp { flex: 1; }
-  .empty { text-align: center; color: var(--sub); font-size: 14px; padding: 24px 0; }
+  /* ===== 說說看：情境 ===== */
+  .ctx { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
 
-  /* 選單、視窗 */
-  #menu { position: fixed; top: calc(52px + env(safe-area-inset-top)); right: 10px; background: #fff; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.18); z-index: 30; display: none; min-width: 220px; overflow: hidden; }
-  #menu button { display: block; width: 100%; text-align: left; border: none; background: none; padding: 12px 16px; font-size: 14px; font-family: inherit; cursor: pointer; color: var(--txt); }
-  #menu button:active { background: #f2f4f7; }
-  #menu hr { border: none; border-top: 1px solid #eee; margin: 0; }
-  .modal { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 40; display: none; align-items: flex-end; justify-content: center; }
-  .modal.show { display: flex; }
-  .sheet { background: #fff; width: 100%; max-width: 560px; border-radius: 18px 18px 0 0; padding: 18px 16px calc(18px + env(safe-area-inset-bottom)); max-height: 88vh; overflow-y: auto; }
-  .sheet h2 { font-size: 17px; margin: 0 0 4px; }
-  .sheet p.note { font-size: 13px; color: var(--sub); margin: 0 0 14px; }
-  .ks { border: 1px solid var(--line); border-radius: 12px; padding: 10px; margin-bottom: 10px; }
-  .ks-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 14px; }
-  .ks-head .t { font-size: 11px; color: var(--sub); flex: 1; }
-  .ks-head a { font-size: 12px; color: var(--c); text-decoration: none; }
-  .ks-in { display: flex; gap: 6px; }
-  .ks-in input { flex: 1; min-width: 0; height: 36px; border: 1px solid #dadce0; border-radius: 8px; padding: 0 10px; font-size: 13px; font-family: monospace; }
-  .ks-msg { font-size: 12px; margin-top: 6px; min-height: 16px; }
-  .set-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 0; border-top: 1px solid #f0f2f5; font-size: 14px; flex-wrap: wrap; }
-  .set-row select, .set-row input[type=range] { font-size: 14px; }
-  .set-row select { max-width: 60%; border: 1px solid var(--line); border-radius: 8px; padding: 5px; font-family: inherit; }
-  #toast { position: fixed; top: calc(64px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); background: #323232; color: #fff; padding: 9px 16px; border-radius: 20px; font-size: 14px; z-index: 60; display: none; max-width: 90vw; text-align: center; }
-  .banner { background: #fff4e5; color: #8a5300; font-size: 13px; padding: 10px 12px; border-radius: 10px; margin-bottom: 12px; display: none; }
-  .banner button { margin-left: 6px; }
-  #micBtn.rec.lv { animation: none; box-shadow: 0 0 0 calc(4px + var(--lv, 0) * 26px) rgba(217,48,37,.22); transition: box-shadow .08s; }
+  /* 錄音鍵 */
+  .mic-wrap { display: flex; flex-direction: column; align-items: center; padding: 14px 0 6px; }
+  #micBtn { width: 96px; height: 96px; border-radius: 50%; border: none; background: var(--c); color: #fff; cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(31,95,191,.32); transition: transform .15s; font-size: 30px; }
+  #micBtn svg.i { width: 40px; height: 40px; stroke-width: 1.7; }
+  #micBtn:active { transform: scale(.95); }
+  #micBtn.rec { background: var(--red); animation: pulse 1.4s infinite; }
+  #micBtn.rec.lv { animation: none; box-shadow: 0 0 0 calc(4px + var(--lv, 0) * 26px) rgba(200,55,45,.2); transition: box-shadow .08s; }
   #micBtn.busy { background: #7d93b8; animation: none; }
-  .mode-tag { font-size: 11px; color: var(--sub); background: #eef1f5; border-radius: 6px; padding: 1px 7px; margin-top: 6px; }
-  .item.playing { outline: 2px solid var(--c); background: #f3f7fe; }
-  .set-h { font-size: 13px; color: var(--c); font-weight: 600; margin: 16px 0 2px; }
-  .set-row small { display: block; color: var(--sub); font-size: 12px; width: 100%; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(200,55,45,.45); } 70% { box-shadow: 0 0 0 22px rgba(200,55,45,0); } 100% { box-shadow: 0 0 0 0 rgba(200,55,45,0); } }
+  #micHint { font-size: 13.5px; color: var(--sub); margin-top: 12px; min-height: 21px; text-align: center; }
+  #micHint.err { color: var(--red); }
+  .mode-tag { font-size: 11.5px; color: var(--faint); margin-top: 2px; }
 
-  /* 播放 */
-  #fab { position: fixed; left: 14px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 20; background: var(--c); color: #fff; border: none; border-radius: 26px; padding: 12px 18px; font-size: 15px; font-family: inherit; font-weight: 600; box-shadow: 0 4px 14px rgba(31,95,191,.4); cursor: pointer; }
-  body.player-open #fab { display: none; }
-  body.player-open main { padding-bottom: 230px; }
-  #player { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; background: #fff; border-radius: 18px 18px 0 0; box-shadow: 0 -4px 20px rgba(0,0,0,.15); padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); display: none; }
-  body.player-open #player { display: block; }
-  .pl-top { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--sub); }
-  .pl-top span { flex: 1; }
-  #plText { font-size: 18px; font-weight: 600; color: #0f2d5c; margin: 6px 0 2px; line-height: 1.4; min-height: 25px; white-space: pre-line; }
-  #plZh { font-size: 13px; color: var(--sub); min-height: 18px; }
-  .pl-bar { height: 4px; background: #eef1f5; border-radius: 2px; margin: 10px 0 4px; overflow: hidden; }
-  #plBar { height: 100%; width: 0; background: var(--c); transition: width .3s; }
-  #plMeta { font-size: 11px; color: #a0a7b2; display: flex; justify-content: space-between; }
-  .pl-ctrl { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 8px; }
-  .pl-ctrl button { border: none; background: #eef1f5; width: 44px; height: 44px; border-radius: 50%; font-size: 17px; cursor: pointer; }
-  .pl-ctrl #plPlay { width: 56px; height: 56px; background: var(--c); color: #fff; font-size: 22px; }
-  .pl-speed { display: flex; align-items: center; gap: 4px; margin-left: 6px; font-size: 13px; }
-  .pl-speed button { width: 30px; height: 30px; font-size: 15px; }
-  .opt-row { padding: 10px 0; border-top: 1px solid #f0f2f5; }
-  .opt-row .lbl { margin-bottom: 6px; }
-  .opt-row .seg { flex-wrap: wrap; }
-  #pmCount { font-size: 13px; color: var(--sub); margin: 10px 0 0; }
+  /* 泡泡：白色＝我想說的中文，黃色＝道地英文 */
+  .bubble { position: relative; border-radius: 18px; padding: 12px 14px 12px; margin-top: 16px; }
+  .bubble::after { content: ''; position: absolute; top: -9px; width: 18px; height: 18px; transform: rotate(45deg); border-radius: 3px; }
+  .bubble.zh { background: var(--card); box-shadow: 0 1px 2px rgba(22,36,61,.06); }
+  .bubble.zh::after { left: 28px; background: var(--card); }
+  .bubble-label { font-size: 12px; color: var(--faint); display: block; margin-bottom: 2px; position: relative; z-index: 1; }
+  #zhInput { width: 100%; min-height: 78px; border: none; padding: 2px 0; font-size: 17px; line-height: 1.65; resize: vertical; background: transparent; position: relative; z-index: 1; }
+  #zhInput:focus { outline: none; }
+  #zhInput::placeholder { color: var(--faint); font-size: 15px; }
+  #interim { color: var(--faint); font-size: 15px; }
+  .bubble.zh:focus-within { box-shadow: 0 0 0 2px var(--c); }
 
-  /* v1.2 學習 */
-  .stats { display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 14px; padding: 10px 12px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
-  .stats .nums { flex: 1; font-size: 12.5px; color: var(--sub); line-height: 1.6; }
-  .stats .nums b { color: var(--txt); }
-  .goal { display: inline-block; width: 64px; height: 6px; background: #eef1f5; border-radius: 3px; vertical-align: middle; overflow: hidden; margin-left: 4px; }
-  .goal i { display: block; height: 100%; background: #f0b429; }
-  #dueBtn { white-space: nowrap; }
-  #dueBtn.done { background: #e8f5ec; color: var(--green); }
-  .try-row { margin-top: 8px; }
-  #tryBox { display: none; margin-top: 8px; background: #fffaf0; border: 1px dashed #f0c64a; border-radius: 12px; padding: 10px; }
-  #tryBox .lbl { color: #8a5300; }
+  #tryBox { display: none; background: #fffaf0; border: 1.5px dashed var(--en-line); border-radius: 16px; padding: 10px 12px; margin-top: 10px; }
+  #tryBox .lbl { color: var(--amber); }
   .en-in { display: flex; gap: 8px; align-items: flex-start; }
-  .en-in textarea { flex: 1; min-height: 56px; border: 1.5px solid var(--line); border-radius: 10px; padding: 8px 10px; font-size: 16px; font-family: inherit; resize: vertical; }
+  .en-in textarea { flex: 1; min-height: 56px; border: 1.5px solid var(--line); border-radius: 12px; padding: 8px 11px; font-size: 16px; font-family: var(--serif); resize: vertical; background: #fff; }
   .en-in textarea:focus { outline: none; border-color: var(--c); }
-  .mic-sm { width: 48px; height: 48px; flex: none; border-radius: 50%; border: none; background: var(--c); color: #fff; font-size: 20px; cursor: pointer; }
-  .mic-sm.rec { background: var(--red); box-shadow: 0 0 0 calc(3px + var(--lv, 0) * 14px) rgba(217,48,37,.22); }
+  .mic-sm { width: 48px; height: 48px; flex: none; border-radius: 50%; border: none; background: var(--c); color: #fff; font-size: 18px; cursor: pointer; display: grid; place-items: center; }
+  .mic-sm svg.i { width: 22px; height: 22px; }
+  .mic-sm.rec { background: var(--red); box-shadow: 0 0 0 calc(3px + var(--lv, 0) * 14px) rgba(200,55,45,.2); }
   .mic-sm.busy { background: #7d93b8; }
-  .mini-hint { font-size: 12px; color: var(--sub); margin-top: 5px; min-height: 16px; }
+  .mini-hint { font-size: 12.5px; color: var(--sub); margin-top: 6px; min-height: 17px; }
   .mini-hint.err { color: var(--red); }
-  .attempt { background: #fffaf0; border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; font-size: 14px; }
-  .attempt .yours { color: var(--sub); }
-  .score { display: inline-block; font-weight: 700; border-radius: 8px; padding: 1px 8px; font-size: 13px; margin-left: 4px; }
-  .score.hi { background: #e3f4e8; color: var(--green); } .score.mid { background: #fff1d6; color: #9a6400; } .score.lo { background: #fde6e4; color: var(--red); }
-  .fixline { margin-top: 6px; font-weight: 600; color: #0f2d5c; }
-  .badges { display: inline-flex; gap: 5px; flex-wrap: wrap; }
-  .badge { font-size: 10.5px; background: #eef1f5; color: var(--sub); border-radius: 5px; padding: 0 5px; }
-  .badge.due { background: #fff1d6; color: #9a6400; } .badge.master { background: #e3f4e8; color: var(--green); }
-  .mine { padding: 6px 0; border-top: 1px solid #f0f2f5; font-size: 15px; display: flex; gap: 6px; align-items: flex-start; }
-  .mine:first-of-type { border-top: none; }
-  .mine span { flex: 1; }
-  .full .sheet { max-height: 96vh; min-height: 70vh; border-radius: 18px 18px 0 0; }
+
+  .switches { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .switch { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--sub); background: #e3e8f0; border-radius: 20px; padding: 5px 12px 5px 6px; cursor: pointer; user-select: none; }
+  .switch input { appearance: none; -webkit-appearance: none; width: 32px; height: 19px; border-radius: 10px; background: #c3ccd9; position: relative; margin: 0; cursor: pointer; transition: background .15s; flex: none; }
+  .switch input::before { content: ''; position: absolute; left: 2px; top: 2px; width: 15px; height: 15px; border-radius: 50%; background: #fff; transition: left .15s; box-shadow: 0 1px 2px rgba(0,0,0,.2); }
+  .switch input:checked { background: var(--c); }
+  .switch input:checked::before { left: 15px; }
+  .switch:has(input:checked) { color: var(--ink); }
+
+  /* ===== 轉譯結果 ===== */
+  #result { display: none; margin-top: 22px; }
+  .mean { font-size: 13.5px; color: var(--sub); padding: 0 4px; }
+  .mean b { color: var(--ink); font-weight: 500; }
+  .bubble.en { background: var(--en); margin-top: 18px; padding: 18px 16px 12px; box-shadow: 0 2px 0 var(--en-line); }
+  .bubble.en::after { right: 30px; background: var(--en); }
+  .en-main { font-family: var(--serif); font-size: 23px; line-height: 1.42; font-weight: 600; color: var(--en-ink); margin: 0 0 14px; position: relative; z-index: 1; letter-spacing: -.1px; }
+  .bubble.en .copy { position: absolute; top: 8px; right: 8px; z-index: 2; color: var(--en-ink); opacity: .6; }
+  .bubble.en .en-main { padding-right: 26px; }
+  .act4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; border-top: 1px solid rgba(16,38,74,.12); padding-top: 8px; position: relative; z-index: 1; }
+  .act4 button { border: none; background: none; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0 2px; font-size: 12px; color: var(--en-ink); border-radius: 10px; cursor: pointer; }
+  .act4 button:active { background: rgba(255,255,255,.5); }
+  .act4 button.on { color: #9a6400; }
+  .act4 svg.i { width: 22px; height: 22px; }
+  .act4 button.on svg.i { fill: #f0b429; stroke: #b07800; }
+
+  .cmp { background: var(--card); border-radius: 14px; margin-top: 12px; padding: 12px 14px; font-size: 14px; }
+  .cmp-head { display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 13.5px; }
+  .cmp .yours { font-family: var(--serif); color: var(--sub); margin: 6px 0; font-size: 15px; text-decoration: line-through; text-decoration-color: rgba(200,55,45,.45); }
+  .cmp p { margin: 4px 0; }
+  .cmp .fixline { font-family: var(--serif); font-weight: 600; color: var(--en-ink); font-size: 15.5px; margin-top: 8px; }
+  .cmp .k { color: var(--faint); font-size: 12px; margin-right: 6px; }
+
+  .sec { background: var(--card); border-radius: 14px; margin-top: 12px; padding: 12px 14px 6px; }
+  .sec h3 { font-size: 13px; color: var(--sub); margin: 0 0 4px; font-weight: 600; display: flex; align-items: baseline; gap: 8px; }
+  .sec h3 small { font-weight: 400; color: var(--faint); font-size: 12px; }
+  .row-en { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0; border-top: 1px solid #eef1f6; }
+  .sec h3 + .row-en { border-top: none; }
+  .row-en .tx { flex: 1; min-width: 0; }
+  .row-en .en { font-family: var(--serif); font-size: 16.5px; line-height: 1.45; color: var(--en-ink); }
+  .row-en .en.b { font-weight: 600; }
+  .row-en .zh { font-size: 13px; color: var(--sub); margin-top: 1px; }
+  .tag { font-size: 11px; background: var(--c2); color: var(--c); border-radius: 6px; padding: 1px 7px; white-space: nowrap; margin-top: 4px; flex: none; }
+  .row-en .btns { display: flex; align-items: center; gap: 2px; flex: none; }
+  .mk { border: 1px solid var(--line); background: #fff; border-radius: 14px; padding: 3px 10px; font-size: 12px; cursor: pointer; color: var(--sub); }
+  .sec.warn { background: #fff8f7; }
+  .sec.warn .en { text-decoration: line-through; text-decoration-color: rgba(200,55,45,.55); color: #7b3a35; }
+
+  .chiprow { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0 8px; scrollbar-width: none; }
+  .chiprow::-webkit-scrollbar { display: none; }
+  .chiprow .tool { white-space: nowrap; flex: none; }
+
+  .foot { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .foot button { border: 1px solid var(--line); background: var(--card); border-radius: 12px; padding: 10px 8px; font-size: 13.5px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .foot button.on { background: var(--green2); border-color: #b8dfc7; color: var(--green); }
+  .foot button:active { background: var(--c2); }
+  .srs-line { font-size: 12.5px; color: var(--faint); margin: 12px 4px 0; text-align: center; }
+
+  /* ===== 紀錄 ===== */
+  .page-h { display: flex; align-items: center; gap: 10px; margin: 2px 2px 12px; }
+  .page-h h2 { font-size: 19px; margin: 0; flex: 1; }
+  .page-h .cnt { font-size: 13px; color: var(--faint); font-weight: 400; margin-left: 4px; }
+  .search { position: relative; margin-bottom: 12px; }
+  .search svg.i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--faint); width: 18px; height: 18px; }
+  #search { width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px 10px 38px; font-size: 15px; background: #fff; }
+  #search:focus { outline: none; border-color: var(--c); }
+  .item { background: var(--card); border-radius: 14px; padding: 12px 8px 10px 14px; margin-bottom: 8px; cursor: pointer; display: flex; gap: 6px; align-items: flex-start; border-left: 4px solid transparent; }
+  .item.starred { border-left-color: var(--en-line); }
+  .item.playing { box-shadow: 0 0 0 2px var(--c); }
+  .item .tx { flex: 1; min-width: 0; }
+  .item .en { font-family: var(--serif); font-size: 16px; font-weight: 600; color: var(--en-ink); line-height: 1.4; }
+  .item .zh { font-size: 13.5px; color: var(--sub); margin-top: 3px; }
+  .item .meta { font-size: 11.5px; color: var(--faint); margin-top: 6px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .item .btns { display: flex; flex-direction: column; align-items: center; }
+  .item .say.del { color: var(--faint); }
+  .item .say.st.on { color: #d49b00; }
+  .item .say.st.on svg.i { fill: #f0b429; }
+  .badge { font-size: 11px; background: #eef1f6; color: var(--sub); border-radius: 6px; padding: 0 6px; }
+  .badge.due { background: var(--amber2); color: var(--amber); } .badge.master { background: var(--green2); color: var(--green); }
+  .badges { display: inline-flex; gap: 5px; }
+  .empty { text-align: center; color: var(--sub); font-size: 14px; padding: 40px 10px; line-height: 1.7; }
+
+  /* ===== 練習 ===== */
+  .today { background: var(--card); border-radius: 18px; padding: 18px 16px; margin-bottom: 12px; }
+  .streak { display: flex; align-items: baseline; gap: 8px; }
+  .streak b { font-size: 40px; line-height: 1; color: var(--c); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .streak span { font-size: 14px; color: var(--sub); }
+  .tgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+  .tgrid div { background: var(--bg); border-radius: 12px; padding: 8px 10px; }
+  .tgrid b { display: block; font-size: 20px; font-variant-numeric: tabular-nums; }
+  .tgrid span { font-size: 12px; color: var(--sub); }
+  .goal-row { margin-top: 14px; font-size: 13px; color: var(--sub); }
+  .goal-bar { height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; margin-top: 6px; }
+  .goal-bar i { display: block; height: 100%; background: #f0b429; border-radius: 4px; }
+  #dueBtn.done { background: var(--green2); color: var(--green); }
+  .pcard { background: var(--card); border-radius: 18px; padding: 16px; margin-top: 12px; }
+  .pcard h3 { margin: 0 0 4px; font-size: 16px; }
+  .pcard p { margin: 0 0 12px; font-size: 13.5px; color: var(--sub); }
+  .pcard .actions { margin-top: 0; }
+  .steps { margin: 4px 0 0; padding-left: 22px; font-size: 14px; color: var(--ink); }
+  .steps li { margin: 6px 0; }
+  .steps li span { color: var(--sub); font-size: 13px; display: block; }
+
+  /* ===== 底部分頁 ===== */
+  .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; height: calc(var(--tab-h) + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom); background: rgba(255,255,255,.96); backdrop-filter: blur(8px); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(3, 1fr); }
+  .tabbar button { border: none; background: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 12px; color: var(--faint); cursor: pointer; position: relative; }
+  .tabbar button.on { color: var(--c); font-weight: 600; }
+  .tabbar svg.i { width: 24px; height: 24px; }
+  .tabbar .dot { position: absolute; top: 7px; left: calc(50% + 8px); min-width: 17px; height: 17px; border-radius: 9px; background: var(--red); color: #fff; font-size: 10.5px; font-weight: 700; display: grid; place-items: center; padding: 0 4px; }
+
+  /* ===== 視窗 ===== */
+  .modal { position: fixed; inset: 0; background: rgba(16,28,48,.45); z-index: 40; display: none; align-items: flex-end; justify-content: center; }
+  .modal.show { display: flex; }
+  .sheet { background: #fff; width: 100%; max-width: 580px; border-radius: 22px 22px 0 0; padding: 20px 18px calc(20px + env(safe-area-inset-bottom)); max-height: 90vh; overflow-y: auto; }
+  .sheet h2 { font-size: 18px; margin: 0 0 4px; }
+  .sheet p.note { font-size: 13.5px; color: var(--sub); margin: 0 0 14px; }
+  .ks { border: 1px solid var(--line); border-radius: 14px; padding: 12px; margin-bottom: 10px; }
+  .ks-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 14.5px; }
+  .ks-head .t { font-size: 12px; color: var(--sub); flex: 1; }
+  .ks-head a { font-size: 12.5px; color: var(--c); text-decoration: none; }
+  .ks-in { display: flex; gap: 6px; }
+  .ks-in input { flex: 1; min-width: 0; height: 38px; border: 1px solid var(--line); border-radius: 9px; padding: 0 10px; font-size: 13px; font-family: monospace; }
+  .ks-msg { font-size: 12.5px; margin-top: 6px; min-height: 16px; }
+  .set-h { font-size: 13px; color: var(--c); font-weight: 600; margin: 18px 0 2px; }
+  .set-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 0; border-top: 1px solid #eef1f6; font-size: 14.5px; flex-wrap: wrap; }
+  .set-row select { max-width: 62%; border: 1px solid var(--line); border-radius: 9px; padding: 6px; font-size: 14px; background: #fff; }
+  .set-row small { display: block; color: var(--sub); font-size: 12.5px; width: 100%; line-height: 1.5; }
+  .opt-row { padding: 11px 0; border-top: 1px solid #eef1f6; }
+  .opt-row .lbl { margin-bottom: 7px; }
+  .opt-row .seg { flex-wrap: wrap; }
+  #pmCount { font-size: 13.5px; color: var(--sub); margin: 12px 0 0; }
+  .phrase { padding: 6px 0; }
+  .phrase b { font-family: var(--serif); color: var(--en-ink); font-size: 17px; }
+  .phrase div { font-size: 13px; color: var(--sub); }
+  .attempt { background: #fffaf0; border-radius: 12px; padding: 10px 12px; margin-top: 10px; font-size: 14px; }
+  .attempt .fixline, .fixline { margin-top: 6px; font-weight: 600; color: var(--en-ink); font-family: var(--serif); }
+  .mine { padding: 6px 0; display: flex; gap: 6px; align-items: flex-start; }
+
+  /* 測驗、跟讀 */
+  .full .sheet { max-height: 96vh; min-height: 72vh; }
   .q-head { display: flex; align-items: center; gap: 8px; }
   .q-head h2 { flex: 1; margin: 0; }
-  .q-prog { height: 4px; background: #eef1f5; border-radius: 2px; margin: 10px 0 14px; overflow: hidden; }
+  .q-head .icon-btn { color: var(--sub); }
+  .q-prog { height: 5px; background: #eef1f6; border-radius: 3px; margin: 12px 0 16px; overflow: hidden; }
   .q-prog i { display: block; height: 100%; background: var(--c); transition: width .3s; }
-  .q-tag { font-size: 12px; color: var(--sub); }
-  .q-zh { font-size: 21px; font-weight: 600; line-height: 1.5; margin: 6px 0 4px; }
-  .q-hint { font-size: 15px; color: #8a5300; background: #fffaf0; border-radius: 8px; padding: 6px 10px; margin: 8px 0; display: none; letter-spacing: .5px; }
-  .q-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .q-tag { font-size: 12.5px; color: var(--faint); }
+  .q-zh { font-size: 22px; font-weight: 600; line-height: 1.5; margin: 6px 0 4px; }
+  .q-hint { font-size: 16px; color: var(--amber); background: var(--amber2); border-radius: 10px; padding: 8px 12px; margin: 8px 0; display: none; font-family: var(--serif); letter-spacing: .5px; }
+  .q-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
   .q-btns .btn { flex: 1; }
-  .q-fb { margin-top: 14px; border-top: 1px dashed var(--line); padding-top: 12px; display: none; }
-  .q-fb .row2 { margin: 6px 0; font-size: 15px; }
-  .q-fb .lab { font-size: 12px; color: var(--sub); display: block; }
-  .q-rate { display: none; gap: 8px; margin-top: 14px; }
-  .q-rate button { flex: 1; border: 1.5px solid var(--line); background: #fff; border-radius: 12px; padding: 10px 4px; font-size: 14px; font-family: inherit; cursor: pointer; line-height: 1.3; }
-  .q-rate button small { display: block; font-size: 11px; color: var(--sub); }
+  .q-fb { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 12px; display: none; }
+  .q-fb .row2 { margin: 8px 0; font-size: 15px; }
+  .q-fb .row2 b { font-family: var(--serif); }
+  .q-fb .lab { font-size: 12px; color: var(--faint); display: block; }
+  .q-rate { display: none; gap: 8px; margin-top: 16px; }
+  .q-rate button { flex: 1; border: 1.5px solid var(--line); background: #fff; border-radius: 14px; padding: 11px 4px; font-size: 14.5px; cursor: pointer; line-height: 1.3; }
+  .q-rate button small { display: block; font-size: 11.5px; color: var(--sub); }
   .q-rate button.rec { border-color: var(--c); background: var(--c2); font-weight: 600; }
-  .q-sum { text-align: center; padding: 20px 0; }
-  .q-sum .big { font-size: 40px; }
+  .q-sum { text-align: center; padding: 24px 0; }
+  .q-sum .big { font-size: 44px; }
   .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
-  .chips button { border: 1px solid var(--line); background: #fff; border-radius: 16px; padding: 4px 10px; font-size: 12px; font-family: inherit; cursor: pointer; }
+  .chips button { border: 1px solid var(--line); background: #fff; border-radius: 16px; padding: 5px 11px; font-size: 12.5px; cursor: pointer; }
   .chips button.on { background: var(--c); color: #fff; border-color: var(--c); }
-  .sh-text { font-size: 20px; font-weight: 600; color: #0f2d5c; line-height: 1.5; margin: 6px 0 10px; }
+  .sh-text { font-family: var(--serif); font-size: 22px; font-weight: 600; color: var(--en-ink); line-height: 1.5; margin: 6px 0 12px; background: var(--en); border-radius: 16px; padding: 14px 16px; }
   .sh-text .ok { color: var(--green); } .sh-text .miss { color: var(--red); text-decoration: underline wavy; }
-  .sh-big { display: flex; justify-content: center; margin: 14px 0 6px; }
-  .sh-big .mic-sm { width: 72px; height: 72px; font-size: 30px; }
+  .sh-big { display: flex; justify-content: center; margin: 18px 0 6px; }
+  .sh-big .mic-sm { width: 76px; height: 76px; }
+  .sh-big .mic-sm svg.i { width: 32px; height: 32px; }
+
+  /* 播放列（在分頁列上方） */
+  #player { position: fixed; left: 8px; right: 8px; bottom: calc(var(--tab-h) + env(safe-area-inset-bottom) + 8px); z-index: 25; background: #fff; border-radius: 18px; box-shadow: 0 6px 26px rgba(22,36,61,.22); padding: 12px 14px; display: none; max-width: 624px; margin: 0 auto; }
+  body.player-open #player { display: block; }
+  .pl-top { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--sub); }
+  .pl-top span { flex: 1; }
+  .pl-top .icon-btn { color: var(--sub); width: 32px; height: 32px; font-size: 16px; }
+  #plText { font-family: var(--serif); font-size: 18px; font-weight: 600; color: var(--en-ink); margin: 2px 0; line-height: 1.4; min-height: 25px; white-space: pre-line; }
+  #plZh { font-size: 13px; color: var(--sub); min-height: 18px; }
+  .pl-bar { height: 4px; background: #eef1f6; border-radius: 2px; margin: 10px 0 4px; overflow: hidden; }
+  #plBar { height: 100%; width: 0; background: var(--c); transition: width .3s; }
+  #plMeta { font-size: 11px; color: var(--faint); display: flex; justify-content: space-between; }
+  .pl-ctrl { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 6px; }
+  .pl-ctrl button { border: none; background: #eef1f6; width: 42px; height: 42px; border-radius: 50%; font-size: 16px; cursor: pointer; }
+  .pl-ctrl #plPlay { width: 54px; height: 54px; background: var(--c); color: #fff; font-size: 21px; }
+  .pl-speed { display: flex; align-items: center; gap: 4px; margin-left: 4px; font-size: 13px; }
+  .pl-speed button { width: 30px; height: 30px; font-size: 15px; }
+
+  #toast { position: fixed; top: calc(64px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); background: #22314d; color: #fff; padding: 9px 16px; border-radius: 20px; font-size: 14px; z-index: 60; display: none; max-width: 90vw; text-align: center; box-shadow: 0 4px 14px rgba(0,0,0,.2); }
 </style>
 </head>
 <body>
 <header>
-  <h1>🗣️ 道地口說轉譯器<span class="ver">v1.2</span></h1>
+  <div class="brand"><img src="icon-192.png" alt=""><h1>道地口說轉譯器<span class="ver">v1.3</span></h1></div>
+  <button class="icon-btn" data-act="settings" aria-label="設定"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   <button class="icon-btn" id="menuBtn" aria-label="選單">⋮</button>
 </header>
 <div id="menu">
-  <button data-act="keys">🔑 AI 金鑰設定</button>
-  <button data-act="settings">⚙️ 轉譯與朗讀設定</button>
+  <button data-act="keys">AI 金鑰設定</button>
+  <button data-act="settings">轉譯、錄音與朗讀設定</button>
   <hr>
-  <button data-act="share">☁️ 備份到 Google Drive</button>
-  <button data-act="download">📥 下載備份檔到手機</button>
-  <button data-act="restore">📂 從備份檔還原</button>
+  <button data-act="share">備份到 Google Drive</button>
+  <button data-act="download">下載備份檔到手機</button>
+  <button data-act="restore">從備份檔還原</button>
   <hr>
-  <button data-act="clearAll">🗑️ 清除全部紀錄</button>
+  <button data-act="clearAll" style="color:var(--red)">清除全部紀錄</button>
 </div>
 
 <main>
   <div class="banner" id="keyBanner">還沒設定 AI 金鑰，無法轉成英文。<button class="btn sm ghost" data-act="keys">設定金鑰</button></div>
   <div class="banner" id="backupBanner">已經超過 7 天沒有備份了。<button class="btn sm ghost" data-act="share">立即備份</button></div>
 
-  <div class="stats" id="stats">
-    <div class="nums" id="statNums"></div>
-    <button class="btn sm pri" id="dueBtn" style="flex:none">📅 複習</button>
-  </div>
-
-  <section class="card">
-    <div class="row" style="justify-content: space-between; margin-bottom: 6px;">
-      <div class="seg" id="segTone">
+  <!-- 分頁 1：說說看 -->
+  <section class="view" id="view-speak">
+    <div class="ctx">
+      <div class="seg" id="segTone" aria-label="說話情境">
         <button data-v="friend">朋友閒聊</button>
         <button data-v="work">同事日常</button>
         <button data-v="polite">禮貌一點</button>
       </div>
-      <div class="seg" id="segAccent">
+      <div class="seg" id="segAccent" aria-label="口音">
         <button data-v="US">美式</button>
         <button data-v="UK">英式</button>
       </div>
     </div>
 
     <div class="mic-wrap">
-      <button id="micBtn" aria-label="開始錄音">🎤</button>
+      <button id="micBtn" aria-label="開始錄音"></button>
       <div id="micHint">按一下開始說中文</div>
       <div class="mode-tag" id="modeTag"></div>
     </div>
 
-    <div class="zh-box">
-      <textarea id="zhInput" placeholder="語音辨識的中文會出現在這裡，有錯字可以直接用鍵盤修改；也可以直接打字。"></textarea>
+    <div class="bubble zh">
+      <span class="bubble-label">我想說</span>
+      <textarea id="zhInput" placeholder="錄音的中文會出現在這裡，有錯字可以直接修改，也可以直接打字"></textarea>
       <div id="interim"></div>
     </div>
-    <div class="try-row"><button class="btn sm ghost" id="tryBtn">🙋 先用英文說說看（再看道地說法）</button></div>
+
     <div id="tryBox">
-      <div class="lbl">🙋 先用你自己的英文說一次，說錯沒關係，AI 會幫你比較、修正</div>
-      <div class="en-in"><textarea id="tryText" placeholder="Try it in English…"></textarea><button class="mic-sm" id="tryMic">🎤</button></div>
+      <div class="lbl">先用你自己的英文說一次，說錯沒關係，等一下會幫你比較、修正</div>
+      <div class="en-in"><textarea id="tryText" placeholder="Try it in English…"></textarea><button class="mic-sm" id="tryMic" aria-label="用英文說"></button></div>
       <div class="mini-hint" id="tryHint"></div>
     </div>
-    <div class="actions">
-      <button class="btn ghost" id="clearBtn" title="清空">✕ 清空</button>
-      <button class="btn pri" id="goBtn">✨ 轉成道地英文</button>
+
+    <div class="switches">
+      <label class="switch"><input type="checkbox" id="tryToggle"> 先用英文試說</label>
+      <label class="switch"><input type="checkbox" id="autoGo"> 說完自動轉譯</label>
     </div>
-    <label class="auto"><input type="checkbox" id="autoGo"> 說完自動轉譯（關掉的話可以先改字再按）</label>
+    <div class="actions">
+      <button class="btn ghost" id="clearBtn">清空</button>
+      <button class="btn pri" id="goBtn">轉成道地英文</button>
+    </div>
+
+    <section id="result"></section>
   </section>
 
-  <section class="card" id="result"></section>
-
-  <div class="hist-head">
-    <h2>📒 我的口說紀錄 <span id="histCount" style="font-weight:400;color:var(--sub);font-size:13px"></span></h2>
-    <div class="seg" id="segFilter">
-      <button data-v="all" class="on">全部</button>
-      <button data-v="star">⭐ 收藏</button>
+  <!-- 分頁 2：紀錄 -->
+  <section class="view" id="view-hist" hidden>
+    <div class="page-h">
+      <h2>我的口說紀錄<span class="cnt" id="histCount"></span></h2>
+      <div class="seg" id="segFilter">
+        <button data-v="all" class="on">全部</button>
+        <button data-v="star">收藏</button>
+      </div>
     </div>
-  </div>
-  <input id="search" type="search" placeholder="🔍 搜尋中文或英文">
-  <div id="hist"></div>
+    <div class="search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="search" type="search" placeholder="搜尋中文或英文"></div>
+    <div id="hist"></div>
+  </section>
+
+  <!-- 分頁 3：練習 -->
+  <section class="view" id="view-practice" hidden>
+    <div class="page-h"><h2>今天的練習</h2></div>
+    <div class="today" id="stats">
+      <div id="statNums"></div>
+    </div>
+    <button class="btn pri big" id="dueBtn">開始今日複習</button>
+
+    <div class="pcard">
+      <h3>連續播放</h3>
+      <p>把你的句子一句句念給你聽，可以關掉螢幕，通勤、走路時跟著說。</p>
+      <div class="actions"><button class="btn ghost" id="fab">選擇句子並播放</button></div>
+    </div>
+
+    <div class="pcard">
+      <h3>每天 15 分鐘的練習法</h3>
+      <ol class="steps">
+        <li>想說什麼就錄下來<span>先用英文試說一次，再看道地說法；收藏 3～5 句</span></li>
+        <li>通勤時連續播放<span>選「今天」，用跟讀模式聽一句、說一句</span></li>
+        <li>睡前做今日複習<span>看中文說英文，忘了的系統會再排複習</span></li>
+      </ol>
+    </div>
+  </section>
 </main>
+
+<nav class="tabbar" aria-label="分頁">
+  <button data-tab="speak" class="on"><svg class="i" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>說說看</button>
+  <button data-tab="hist"><svg class="i" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>紀錄</button>
+  <button data-tab="practice"><svg class="i" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>練習<span class="dot" id="tabDot" hidden></span></button>
+</nav>
 
 <!-- 金鑰設定 -->
 <div class="modal" id="keysModal">
@@ -435,7 +586,6 @@
   </div>
 </div>
 
-<button id="fab">▶ 播放例句</button>
 <div id="player">
   <div class="pl-top"><span id="plTitle">▶️ 播放中</span><button class="icon-btn" id="plClose" style="color:var(--sub);font-size:18px">✕</button></div>
   <div id="plText"></div>
@@ -456,9 +606,27 @@
 
 <script>
 'use strict';
-const VERSION = '1.2';
+const VERSION = '1.3';
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+// 線條圖示
+const svg = d => `<svg class="i" viewBox="0 0 24 24">${d}</svg>`;
+const IC = {
+  mic: svg('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>'),
+  stop: svg('<rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor"/>'),
+  wait: svg('<circle cx="12" cy="12" r="8" stroke-dasharray="4 3"/>'),
+  spk: svg('<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>'),
+  slow: svg('<circle cx="12" cy="13" r="7"/><path d="M12 9v4l2.5 1.5M9.5 3h5"/>'),
+  shadow: svg('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/><path d="M2.5 8v4M21.5 8v4"/>'),
+  star: svg('<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/>'),
+  play: svg('<path d="M8 5.5v13l10.5-6.5z"/>'),
+  quiz: svg('<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/>'),
+  check: svg('<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.8"/>'),
+  book: svg('<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 18.5V5.5M8 7h8"/>'),
+  copy: svg('<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/>'),
+  pen: svg('<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>'),
+  trash: svg('<path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/>')
+};
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 function toast(msg, ms = 2200) { const t = $('#toast'); t.textContent = msg; t.style.display = 'block'; clearTimeout(toast._t); toast._t = setTimeout(() => t.style.display = 'none', ms); }
 
@@ -660,7 +828,7 @@ function startRec() {
 function stopRec(reason) { if (!recording) return; curMode === 'whisper' ? stopWhisper(reason) : stopChrome(reason); }
 function setRecUI(on, level) {
   micBtn.classList.toggle('rec', on); micBtn.classList.toggle('lv', on && level);
-  micBtn.textContent = on ? '■' : '🎤';
+  micBtn.innerHTML = on ? IC.stop : IC.mic;
   if (!on) micBtn.style.removeProperty('--lv');
 }
 function afterInput() {
@@ -727,7 +895,7 @@ async function onWhisperStop() {
   if (W.reason === 'nothing' || (!W.heard && W.reason !== 'manual')) { hint('沒有聽到聲音，請靠近麥克風再試一次', true); return; }
   const blob = new Blob(W.chunks, { type: W.mime });
   if (blob.size < 2000) { hint('錄音太短，請再試一次', true); return; }
-  sttBusy = true; micBtn.classList.add('busy'); micBtn.textContent = '⏳';
+  sttBusy = true; micBtn.classList.add('busy'); micBtn.innerHTML = IC.wait;
   hint('🧠 正在辨識你說的話…');
   try {
     const text = await transcribe(blob, W.mime);
@@ -738,7 +906,7 @@ async function onWhisperStop() {
     afterInput();
   } catch (e) {
     hint('辨識失敗：' + (e.message || e) + '（可以改用鍵盤輸入，或到設定改成 Chrome 辨識）', true);
-  } finally { sttBusy = false; micBtn.classList.remove('busy'); micBtn.textContent = '🎤'; }
+  } finally { sttBusy = false; micBtn.classList.remove('busy'); micBtn.innerHTML = IC.mic; }
 }
 // Whisper 在沒聲音時偶爾會「幻聽」出這類字幕句
 const HALLU = /(字幕|訂閱|订阅|點贊|点赞|明鏡|明镜|打賞|打赏|感謝觀看|感谢观看|謝謝觀看|谢谢观看|請不吝|请不吝|優優獨播|优优独播|Amara)/;
@@ -893,40 +1061,50 @@ async function doTranslate(extra, label) {
 
 function renderResult(en) {
   const box = $('#result'); box.style.display = 'block';
-  const alts = en.alternatives.map(a => `<div class="alt"><span class="tag">${esc(a.label || '其他說法')}</span><span class="en">${esc(a.en)}</span><button class="say" data-say="${esc(a.en)}">🔊</button></div>`).join('');
-  const phr = en.phrases.map((p, i) => `<div class="phrase"><b>${esc(p.en)}</b> <button class="say" data-say="${esc(p.en)}" style="font-size:15px">🔊</button><button class="tool" data-make="${en.id}:${i}" style="padding:2px 9px;font-size:12px">✍️ 造句</button><div>${esc(p.zh)}</div></div>`).join('');
-  const mine = (en.mine || []).map(m => `<div class="mine"><span>${esc(m.en)}</span><button class="say" data-say="${esc(m.en)}">🔊</button></div>`).join('');
+  const say = t => `<button class="say" data-say="${esc(t)}" aria-label="朗讀">${IC.spk}</button>`;
+  const alts = en.alternatives.map(a => `<div class="row-en"><span class="tag">${esc(a.label || '其他說法')}</span><div class="tx"><div class="en">${esc(a.en)}</div></div><div class="btns">${say(a.en)}</div></div>`).join('');
+  const phr = en.phrases.map((p, i) => `<div class="row-en"><div class="tx"><div class="en b">${esc(p.en)}</div><div class="zh">${esc(p.zh)}</div></div><div class="btns">${say(p.en)}<button class="mk" data-make="${en.id}:${i}">造句</button></div></div>`).join('');
+  const mine = (en.mine || []).map(m => `<div class="row-en"><div class="tx"><div class="en">${esc(m.en)}</div>${m.phrase ? `<div class="zh">用了 ${esc(m.phrase)}</div>` : ''}</div><div class="btns">${say(m.en)}</div></div>`).join('');
+  const av = en.avoid.map(a => `<div class="row-en"><div class="tx"><div class="en">${esc(a.chinglish)}</div><div class="zh">${esc(a.why)}</div></div></div>`).join('');
   const at = en.attempt;
-  const atHtml = at ? `<div class="attempt"><div>🙋 你的說法 <span class="score ${scoreCls(at.score)}">${at.score} 分</span></div><div class="yours">${esc(at.text)}</div>${at.good ? `<div>👍 ${esc(at.good)}</div>` : ''}${at.fix ? `<div>🔧 ${esc(at.fix)}</div>` : ''}${at.fixed ? `<div class="fixline">✏️ ${esc(at.fixed)} <button class="say" data-say="${esc(at.fixed)}">🔊</button></div>` : ''}<div style="font-size:12px;color:var(--sub);margin-top:4px">👇 下面是母語人士最自然的說法，比較看看差在哪裡</div></div>` : '';
-  const av = en.avoid.map(a => `<div class="avoid">❌ <s>${esc(a.chinglish)}</s><div>${esc(a.why)}</div></div>`).join('');
+  const cmp = at ? `<div class="cmp">
+      <div class="cmp-head">你剛剛的說法 <span class="score ${scoreCls(at.score)}">${at.score} 分</span></div>
+      <div class="yours">${esc(at.text)}</div>
+      ${at.good ? `<p><span class="k">做得好</span>${esc(at.good)}</p>` : ''}
+      ${at.fix ? `<p><span class="k">要修正</span>${esc(at.fix)}</p>` : ''}
+      ${at.fixed ? `<div class="fixline">${esc(at.fixed)} ${say(at.fixed)}</div>` : ''}
+    </div>` : '';
+  const used = usedToday(en);
   box.innerHTML = `
-    ${en.understood ? `<div class="understood">🧠 你的意思：${esc(en.understood)}</div>` : ''}
-    ${atHtml}
-    <div class="native" id="nativeText">${esc(en.native)}</div>
-    <div class="tools">
-      <button class="tool" data-say="${esc(en.native)}">🔊 聽</button>
-      <button class="tool" data-slow="${esc(en.native)}">🐢 慢速</button>
-      <button class="tool" data-shadow="${en.id}">🎙️ 跟讀</button>
-      <button class="tool" data-playone="${en.id}">▶ 整組播放</button>
-      <button class="tool ${en.star ? 'on' : ''}" data-star="${en.id}">${en.star ? '⭐ 已收藏' : '☆ 收藏'}</button>
+    ${en.understood ? `<div class="mean">你的意思：<b>${esc(en.understood)}</b></div>` : ''}
+    <div class="bubble en">
+      <button class="say copy" data-copy="${esc(en.native)}" aria-label="複製英文">${IC.copy}</button>
+      <p class="en-main" id="nativeText">${esc(en.native)}</p>
+      <div class="act4">
+        <button data-say="${esc(en.native)}">${IC.spk}聽</button>
+        <button data-slow="${esc(en.native)}">${IC.slow}慢速</button>
+        <button data-shadow="${en.id}">${IC.shadow}跟讀</button>
+        <button data-star="${en.id}" class="${en.star ? 'on' : ''}">${IC.star}${en.star ? '已收藏' : '收藏'}</button>
+      </div>
     </div>
-    <div class="tools" style="margin-top:6px">
-      <button class="tool" data-quizone="${en.id}">🧠 考考我</button>
-      <button class="tool ${usedToday(en) ? 'on' : ''}" data-used="${en.id}">${usedToday(en) ? '✅ 今天用過了' : '✅ 我今天用過了'}${en.used ? `（${en.used}）` : ''}</button>
-      <button class="tool" data-nb="${en.id}">${en.savedNb ? '📖 已存到筆記本' : '📖 存到英語筆記本'}</button>
-      <button class="tool" data-copy="${esc(en.native)}">📋 複製</button>
+    ${cmp}
+    ${alts ? `<div class="sec"><h3>其他說法</h3>${alts}</div>` : ''}
+    ${phr ? `<div class="sec"><h3>道地用語<small>按「造句」用它說一句自己的話</small></h3>${phr}</div>` : ''}
+    ${mine ? `<div class="sec"><h3>我的造句</h3>${mine}</div>` : ''}
+    ${av ? `<div class="sec warn"><h3>中式英文陷阱</h3>${av}</div>` : ''}
+    <div class="sec"><h3>調整語氣</h3><div class="chiprow">
+      <button class="tool" data-tweak="casual">再口語一點</button>
+      <button class="tool" data-tweak="polite">客氣一點</button>
+      <button class="tool" data-tweak="short">更簡短</button>
+      <button class="tool" data-tweak="again">換個說法</button>
+    </div></div>
+    <div class="foot">
+      <button data-quizone="${en.id}">${IC.quiz}考考我</button>
+      <button data-playone="${en.id}">${IC.play}整組播放</button>
+      <button data-used="${en.id}" class="${used ? 'on' : ''}">${IC.check}${used ? '今天用過了' : '我今天用過了'}${en.used ? `（${en.used}）` : ''}</button>
+      <button data-nb="${en.id}">${IC.book}${en.savedNb ? '已存到筆記本' : '存到英語筆記本'}</button>
     </div>
-    ${srsLine(en)}
-    ${alts ? `<div class="sec"><h3>💬 其他說法</h3>${alts}</div>` : ''}
-    ${phr ? `<div class="sec"><h3>🔑 道地用語　<span style="font-weight:400">按 ✍️ 用它自己造句</span></h3>${phr}</div>` : ''}
-    ${mine ? `<div class="sec"><h3>✍️ 我的造句</h3>${mine}</div>` : ''}
-    ${av ? `<div class="sec"><h3>⚠️ 中式英文陷阱</h3>${av}</div>` : ''}
-    <div class="tweak">
-      <button class="tool" data-tweak="casual">😎 再口語一點</button>
-      <button class="tool" data-tweak="polite">🙂 客氣一點</button>
-      <button class="tool" data-tweak="short">✂️ 更簡短</button>
-      <button class="tool" data-tweak="again">🔄 換個說法</button>
-    </div>`;
+    ${srsLine(en)}`;
 }
 const TWEAKS = {
   casual: ['再口語一點', 'Make "native" even more casual and slangy, like texting or chatting with a close friend.'],
@@ -1417,16 +1595,20 @@ function fmtTime(ts) { const d = new Date(ts), n = new Date(); const p = x => St
 function renderHistory() {
   const q = $('#search').value.trim().toLowerCase();
   const list = hist.filter(h => (filter === 'all' || h.star) && (!q || (h.zh + ' ' + h.native + ' ' + (h.understood || '')).toLowerCase().includes(q)));
-  $('#histCount').textContent = hist.length ? `(${hist.length})` : '';
+  $('#histCount').textContent = hist.length ? `${hist.length} 句` : '';
   $('#hist').innerHTML = list.length ? list.map(h => `
-    <div class="item" data-open="${h.id}">
-      <div class="en">${esc(h.native)}</div>
-      <div class="zh">${esc(h.zh)}</div>
-      <div class="meta"><span>${fmtTime(h.ts)}・${TONE_NAME[h.tone] || ''}</span> ${badgesOf(h)}<span class="sp"></span>
-        <button class="say" data-say="${esc(h.native)}">🔊</button>
-        <button class="say" data-star="${h.id}">${h.star ? '⭐' : '☆'}</button>
-        <button class="say" data-del="${h.id}">🗑️</button></div>
-    </div>`).join('') : `<div class="empty">${hist.length ? '找不到符合的紀錄' : '還沒有紀錄。按上面的 🎤 說一句中文試試看！'}</div>`;
+    <div class="item ${h.star ? 'starred' : ''}" data-open="${h.id}">
+      <div class="tx">
+        <div class="en">${esc(h.native)}</div>
+        <div class="zh">${esc(h.zh)}</div>
+        <div class="meta"><span>${fmtTime(h.ts)}</span><span>${TONE_NAME[h.tone] || ''}</span>${badgesOf(h)}</div>
+      </div>
+      <div class="btns">
+        <button class="say" data-say="${esc(h.native)}" aria-label="朗讀">${IC.spk}</button>
+        <button class="say st ${h.star ? 'on' : ''}" data-star="${h.id}" aria-label="收藏">${IC.star}</button>
+        <button class="say del" data-del="${h.id}" aria-label="刪除">${IC.trash}</button>
+      </div>
+    </div>`).join('') : `<div class="empty">${hist.length ? '找不到符合的紀錄' : '還沒有紀錄。<br>到「說說看」錄一句中文，轉譯後會自動存在這裡。'}</div>`;
   if (player.open) updatePlayer();
 }
 $('#hist').addEventListener('click', e => {
@@ -1435,7 +1617,7 @@ $('#hist').addEventListener('click', e => {
   const it = e.target.closest('[data-open]'); if (!it || e.target.closest('button')) return;
   const h = hist.find(x => x.id === it.dataset.open); if (!h) return;
   current = h; zhInput.value = h.zh; renderResult(h);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  showTab('speak'); setTimeout(() => $('#result').scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
 });
 $('#search').oninput = renderHistory;
 function bindSeg(id, get, set) {
@@ -1575,11 +1757,19 @@ function streak() {
   return n;
 }
 function renderStats() {
-  const d = daily[dkey()] || {}, goal = +settings.dailyGoal || 5, st = d.starred || 0, due = dueList().length;
-  $('#statNums').innerHTML = `🔥 連續 <b>${streak()}</b> 天　📝 新學 <b>${d.learned || 0}</b>　🔁 複習 <b>${d.reviewed || 0}</b>${d.used ? `　✅ 用出去 <b>${d.used}</b>` : ''}<br>⭐ 今天收藏 <b>${st}</b> / ${goal} <span class="goal"><i style="width:${Math.min(100, st / goal * 100)}%"></i></span>${st >= goal ? ' 🎯 達標' : ''}`;
+  const d = daily[dkey()] || {}, goal = +settings.dailyGoal || 5, st = d.starred || 0, due = dueList().length, s = streak();
+  $('#statNums').innerHTML = `
+    <div class="streak"><b>${s}</b><span>${s ? '天連續練習' : '天，今天開始第一天吧'}</span></div>
+    <div class="tgrid">
+      <div><b>${d.learned || 0}</b><span>新學句子</span></div>
+      <div><b>${d.reviewed || 0}</b><span>複習次數</span></div>
+      <div><b>${d.used || 0}</b><span>真的用出去</span></div>
+    </div>
+    <div class="goal-row">今天收藏 ${st} / ${goal} 句${st >= goal ? '，達標了' : ''}<div class="goal-bar"><i style="width:${Math.min(100, st / goal * 100)}%"></i></div></div>`;
   const b = $('#dueBtn');
-  b.textContent = due ? `📅 待複習 ${due}` : '🎉 複習完了';
+  b.textContent = due ? `開始今日複習（${due} 句）` : '今天的複習完成了';
   b.classList.toggle('done', !due);
+  const dot = $('#tabDot'); dot.hidden = !due; dot.textContent = due > 99 ? '99+' : due;
 }
 $('#dueBtn').onclick = () => {
   const list = dueList();
@@ -1608,21 +1798,18 @@ function grade(h, g) {   // g：0 忘了、1 差一點、2 會了
 const lvName = lv => lv >= 6 ? '🏆 熟記' : lv === 0 ? '新句' : `Lv${lv}`;
 function dueLabel(due) { const n = Math.round((dayStart(due) - dayStart()) / DAY); return n <= 0 ? '今天' : n === 1 ? '明天' : `${n} 天後`; }
 function srsLine(h) {
-  if (!inSrs(h)) return `<div style="font-size:12px;color:var(--sub);margin-top:8px">⭐ 收藏後會自動排進複習（當天 → 1 → 3 → 7 → 14 → 30 天）</div>`;
+  if (!inSrs(h)) return `<div class="srs-line">收藏後會自動排進複習：當天、1、3、7、14、30 天</div>`;
   const s = ensureSrs(h);
-  return `<div style="font-size:12px;color:var(--sub);margin-top:8px">📅 複習進度：${lvName(s.lv)}・下次複習：${dueLabel(s.due)}${s.n ? `・已複習 ${s.n} 次` : ''}</div>`;
+  return `<div class="srs-line">複習進度 ${lvName(s.lv)}，下次複習：${dueLabel(s.due)}${s.n ? `，已複習 ${s.n} 次` : ''}</div>`;
 }
 function badgesOf(h) {
   const b = [];
   if (h.srs && inSrs(h)) {
-    if (h.srs.lv >= 6) b.push('<span class="badge master">🏆 熟記</span>');
-    else if (h.srs.due < dayStart() + DAY) b.push('<span class="badge due">📅 待複習</span>');
-    else b.push(`<span class="badge">📅 ${dueLabel(h.srs.due)}</span>`);
+    if (h.srs.lv >= 6) b.push('<span class="badge master">熟記</span>');
+    else if (h.srs.due < dayStart() + DAY) b.push('<span class="badge due">待複習</span>');
+    else b.push(`<span class="badge">${dueLabel(h.srs.due)}複習</span>`);
   }
-  if (h.attempt) b.push(`<span class="badge">🙋 ${h.attempt.score}</span>`);
-  if (h.shadow) b.push(`<span class="badge">🎙️ ${h.shadow.best}%</span>`);
-  if (h.used) b.push(`<span class="badge">✅ ${h.used}</span>`);
-  if (h.mine && h.mine.length) b.push(`<span class="badge">✍️ ${h.mine.length}</span>`);
+  if (h.shadow) b.push(`<span class="badge">跟讀 ${h.shadow.best}%</span>`);
   return b.length ? `<span class="badges">${b.join('')}</span>` : '';
 }
 const usedToday = h => (h.usedAt || 0) >= dayStart();
@@ -1663,8 +1850,8 @@ function recEnWhisper(btn, say, opts) {
     try { ctx = new (window.AudioContext || window.webkitAudioContext)(); an = ctx.createAnalyser(); an.fftSize = 1024; ctx.createMediaStreamSource(stream).connect(an); buf = new Float32Array(an.fftSize); } catch (e) {}
     const st = { t0: performance.now(), last: performance.now(), vms: 0, heard: !an, noise: 0, calib: [], reason: '' };
     let stopped = false, timer = 0, lastT = st.t0;
-    const reset = () => { btn.classList.remove('rec', 'busy'); btn.textContent = '🎤'; btn.style.removeProperty('--lv'); };
-    const stop = reason => { if (stopped) return; stopped = true; clearInterval(timer); st.reason = reason; btn.classList.remove('rec'); btn.classList.add('busy'); btn.textContent = '⏳'; try { mr.state !== 'inactive' ? mr.stop() : finish(); } catch (e) { finish(); } };
+    const reset = () => { btn.classList.remove('rec', 'busy'); btn.innerHTML = IC.mic; btn.style.removeProperty('--lv'); };
+    const stop = reason => { if (stopped) return; stopped = true; clearInterval(timer); st.reason = reason; btn.classList.remove('rec'); btn.classList.add('busy'); btn.innerHTML = IC.wait; try { mr.state !== 'inactive' ? mr.stop() : finish(); } catch (e) { finish(); } };
     enRec = { stop: () => stop('manual') };
     async function finish() {
       enRec = null;
@@ -1680,7 +1867,7 @@ function recEnWhisper(btn, say, opts) {
     mr.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
     mr.onstop = finish;
     mr.start(500);
-    btn.classList.add('rec'); btn.textContent = '■';
+    btn.classList.add('rec'); btn.innerHTML = IC.stop;
     const sil = +settings.silence ? Math.max(1.5, +settings.silence) : 0;
     timer = setInterval(() => {
       const now = performance.now(), dt = now - lastT, el = now - st.t0; lastT = now;
@@ -1705,16 +1892,16 @@ function recEnChrome(btn, say) {
     const rec = new SR(); rec.lang = settings.accent === 'UK' ? 'en-GB' : 'en-US'; rec.continuous = false; rec.interimResults = true;
     let fin = '', it = '', err = null, done = false;
     enRec = { stop: () => { try { rec.stop(); } catch (e) {} } };
-    btn.classList.add('rec'); btn.textContent = '■'; say('🎙️ 聆聽中…說完會自動停止');
+    btn.classList.add('rec'); btn.innerHTML = IC.stop; say('🎙️ 聆聽中…說完會自動停止');
     rec.onresult = e => { let f = '', i2 = ''; for (let i = 0; i < e.results.length; i++) { const r = e.results[i]; if (r.isFinal) f = mergeSeg(f, r[0].transcript); else i2 = mergeSeg(i2, r[0].transcript); } fin = f; it = i2; say('🎙️ ' + (fin || it)); };
     rec.onerror = e => { if (e.error !== 'no-speech' && e.error !== 'aborted') err = e.error; };
     rec.onend = () => {
-      if (done) return; done = true; enRec = null; btn.classList.remove('rec'); btn.textContent = '🎤';
+      if (done) return; done = true; enRec = null; btn.classList.remove('rec'); btn.innerHTML = IC.mic;
       const text = (fin || it).trim();
       if (!text) { say(err === 'not-allowed' ? '沒有麥克風權限' : '沒有聽到內容，請再試一次', true); resolve(null); return; }
       say(''); resolve({ text, blob: null });
     };
-    try { rec.start(); } catch (e) { done = true; enRec = null; btn.classList.remove('rec'); btn.textContent = '🎤'; say('語音啟動失敗', true); resolve(null); }
+    try { rec.start(); } catch (e) { done = true; enRec = null; btn.classList.remove('rec'); btn.innerHTML = IC.mic; say('語音啟動失敗', true); resolve(null); }
   });
 }
 // 字詞比對（跟讀、離線測驗用）
@@ -1734,11 +1921,11 @@ function markWords(text, ok) { let k = 0; return String(text).split(/(\s+)/).map
 const tryOpen = () => $('#tryBox').style.display === 'block';
 function setTry(o) {
   $('#tryBox').style.display = o ? 'block' : 'none';
-  $('#tryBtn').textContent = o ? '🙋 收起「先試說」' : '🙋 先用英文說說看（再看道地說法）';
+  $('#tryToggle').checked = o;
   settings.tryFirst = o; saveSet();
-  if (o && !$('#tryText').value) $('#tryHint').textContent = '步驟：① 說（或打）中文 → ② 在這裡用英文試著說 → ③ 按「轉成道地英文」比較';
+  if (o && !$('#tryText').value) $('#tryHint').textContent = '步驟：說（或打）中文，在這裡用英文試著說，再按「轉成道地英文」比較';
 }
-$('#tryBtn').onclick = () => setTry(!tryOpen());
+$('#tryToggle').onchange = e => setTry(e.target.checked);
 $('#tryMic').onclick = async () => {
   const r = await recordEnglish($('#tryMic'), $('#tryHint'));
   if (r && r.text) { $('#tryText').value = r.text; $('#tryHint').textContent = '👍 好了！按「轉成道地英文」看看母語人士怎麼說'; }
@@ -1814,13 +2001,13 @@ function localJudge(h, ans) {
 function revealQ(j) {
   const h = Q.list[Q.i];
   const verdict = j ? { good: '😎 很道地！', close: '🤔 意思有到，可以更自然', wrong: '😣 再加油' }[j.grade] || '' : '';
-  const alts = h.alternatives.map(a => `<div class="row2"><span class="lab">${esc(a.label || '其他說法')}</span>${esc(a.en)} <button class="say" data-say="${esc(a.en)}">🔊</button></div>`).join('');
+  const alts = h.alternatives.map(a => `<div class="row2"><span class="lab">${esc(a.label || '其他說法')}</span><span class="serif">${esc(a.en)}</span> <button class="say" data-say="${esc(a.en)}">${IC.spk}</button></div>`).join('');
   $('#qFb').innerHTML = `
-    ${j ? `<div class="row2"><span class="lab">你說的</span>${esc(Q.ans)}</div>
+    ${j ? `<div class="row2"><span class="lab">你說的</span><span class="serif">${esc(Q.ans)}</span></div>
     <div class="row2"><b>${verdict}</b> <span class="score ${scoreCls(j.score)}">${j.score} 分</span></div>
     ${j.feedback ? `<div class="row2" style="font-size:14px">${esc(j.feedback)}</div>` : ''}
-    ${j.fixed && j.fixed.trim().toLowerCase() !== Q.ans.trim().toLowerCase() ? `<div class="row2"><span class="lab">✏️ 修正你的句子</span><b>${esc(j.fixed)}</b> <button class="say" data-say="${esc(j.fixed)}">🔊</button></div>` : ''}` : ''}
-    <div class="row2"><span class="lab">⭐ 道地說法</span><b style="color:#0f2d5c">${esc(h.native)}</b> <button class="say" data-say="${esc(h.native)}">🔊</button></div>
+    ${j.fixed && j.fixed.trim().toLowerCase() !== Q.ans.trim().toLowerCase() ? `<div class="row2"><span class="lab">修正你的句子</span><b>${esc(j.fixed)}</b> <button class="say" data-say="${esc(j.fixed)}">${IC.spk}</button></div>` : ''}` : ''}
+    <div class="row2"><span class="lab">道地說法</span><b style="color:#0f2d5c">${esc(h.native)}</b> <button class="say" data-say="${esc(h.native)}">${IC.spk}</button></div>
     ${alts}
     <div class="tools" style="margin-top:8px"><button class="tool" data-shadow="${h.id}">🎙️ 跟讀這句</button></div>`;
   $('#qFb').style.display = 'block'; $('#qBtns').style.display = 'none'; $('#qRate').style.display = 'flex';
@@ -1919,8 +2106,8 @@ Return JSON only: {"score": 0-100, "feedback": "一兩句${sc}：用法對不對
     const s = Math.max(0, Math.min(100, +j.score || 0));
     $('#mkResult').innerHTML = `<div class="attempt" style="margin-top:10px">
       <div><span class="score ${scoreCls(s)}">${s} 分</span> ${esc(j.feedback || '')}</div>
-      <div class="fixline">✏️ ${esc(fixed)} <button class="say" data-say="${esc(fixed)}">🔊</button></div>
-      ${j.idea ? `<div style="margin-top:6px">💡 再一個例子：${esc(j.idea)} <button class="say" data-say="${esc(j.idea)}">🔊</button></div>` : ''}
+      <div class="fixline">✏️ ${esc(fixed)} <button class="say" data-say="${esc(fixed)}">${IC.spk}</button></div>
+      ${j.idea ? `<div style="margin-top:6px">💡 再一個例子：${esc(j.idea)} <button class="say" data-say="${esc(j.idea)}">${IC.spk}</button></div>` : ''}
       <div style="font-size:12px;color:var(--sub);margin-top:6px">已存到「✍️ 我的造句」，連續播放選「再加道地用語」時也會播放。</div></div>`;
     $('#mkText').value = '';
   } catch (e) { toast('檢查失敗：' + e.message, 3500); }
@@ -1956,6 +2143,17 @@ function saveToNotebook(h) {
   if (current && current.id === h.id) renderResult(h);
   toast(words || exs ? `📖 已存到筆記本「${TOPIC}」：新增 ${words} 個片語、${exs} 句例句` : '這些片語和例句已經在筆記本裡了', 3000);
 }
+
+// ================= 分頁 =================
+function showTab(t) {
+  document.querySelectorAll('.view').forEach(v => v.hidden = v.id !== 'view-' + t);
+  document.querySelectorAll('.tabbar button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
+  if (t === 'practice') renderStats();
+  window.scrollTo(0, 0);
+}
+document.querySelector('.tabbar').onclick = e => { const b = e.target.closest('button[data-tab]'); if (b) showTab(b.dataset.tab); };
+micBtn.innerHTML = IC.mic;
+document.querySelectorAll('.mic-sm').forEach(b => b.innerHTML = IC.mic);
 
 // ================= 啟動 =================
 renderHistory(); updateBanners(); updateModeTag(); updateSpeed(); renderStats();
