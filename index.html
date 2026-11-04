@@ -103,7 +103,7 @@
   .set-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 0; border-top: 1px solid #f0f2f5; font-size: 14px; flex-wrap: wrap; }
   .set-row select, .set-row input[type=range] { font-size: 14px; }
   .set-row select { max-width: 60%; border: 1px solid var(--line); border-radius: 8px; padding: 5px; font-family: inherit; }
-  #toast { position: fixed; bottom: calc(24px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); background: #323232; color: #fff; padding: 9px 16px; border-radius: 20px; font-size: 14px; z-index: 60; display: none; max-width: 90vw; text-align: center; }
+  #toast { position: fixed; top: calc(64px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); background: #323232; color: #fff; padding: 9px 16px; border-radius: 20px; font-size: 14px; z-index: 60; display: none; max-width: 90vw; text-align: center; }
   .banner { background: #fff4e5; color: #8a5300; font-size: 13px; padding: 10px 12px; border-radius: 10px; margin-bottom: 12px; display: none; }
   .banner button { margin-left: 6px; }
   #micBtn.rec.lv { animation: none; box-shadow: 0 0 0 calc(4px + var(--lv, 0) * 26px) rgba(217,48,37,.22); transition: box-shadow .08s; }
@@ -135,11 +135,68 @@
   .opt-row .lbl { margin-bottom: 6px; }
   .opt-row .seg { flex-wrap: wrap; }
   #pmCount { font-size: 13px; color: var(--sub); margin: 10px 0 0; }
+
+  /* v1.2 學習 */
+  .stats { display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 14px; padding: 10px 12px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .stats .nums { flex: 1; font-size: 12.5px; color: var(--sub); line-height: 1.6; }
+  .stats .nums b { color: var(--txt); }
+  .goal { display: inline-block; width: 64px; height: 6px; background: #eef1f5; border-radius: 3px; vertical-align: middle; overflow: hidden; margin-left: 4px; }
+  .goal i { display: block; height: 100%; background: #f0b429; }
+  #dueBtn { white-space: nowrap; }
+  #dueBtn.done { background: #e8f5ec; color: var(--green); }
+  .try-row { margin-top: 8px; }
+  #tryBox { display: none; margin-top: 8px; background: #fffaf0; border: 1px dashed #f0c64a; border-radius: 12px; padding: 10px; }
+  #tryBox .lbl { color: #8a5300; }
+  .en-in { display: flex; gap: 8px; align-items: flex-start; }
+  .en-in textarea { flex: 1; min-height: 56px; border: 1.5px solid var(--line); border-radius: 10px; padding: 8px 10px; font-size: 16px; font-family: inherit; resize: vertical; }
+  .en-in textarea:focus { outline: none; border-color: var(--c); }
+  .mic-sm { width: 48px; height: 48px; flex: none; border-radius: 50%; border: none; background: var(--c); color: #fff; font-size: 20px; cursor: pointer; }
+  .mic-sm.rec { background: var(--red); box-shadow: 0 0 0 calc(3px + var(--lv, 0) * 14px) rgba(217,48,37,.22); }
+  .mic-sm.busy { background: #7d93b8; }
+  .mini-hint { font-size: 12px; color: var(--sub); margin-top: 5px; min-height: 16px; }
+  .mini-hint.err { color: var(--red); }
+  .attempt { background: #fffaf0; border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; font-size: 14px; }
+  .attempt .yours { color: var(--sub); }
+  .score { display: inline-block; font-weight: 700; border-radius: 8px; padding: 1px 8px; font-size: 13px; margin-left: 4px; }
+  .score.hi { background: #e3f4e8; color: var(--green); } .score.mid { background: #fff1d6; color: #9a6400; } .score.lo { background: #fde6e4; color: var(--red); }
+  .fixline { margin-top: 6px; font-weight: 600; color: #0f2d5c; }
+  .badges { display: inline-flex; gap: 5px; flex-wrap: wrap; }
+  .badge { font-size: 10.5px; background: #eef1f5; color: var(--sub); border-radius: 5px; padding: 0 5px; }
+  .badge.due { background: #fff1d6; color: #9a6400; } .badge.master { background: #e3f4e8; color: var(--green); }
+  .mine { padding: 6px 0; border-top: 1px solid #f0f2f5; font-size: 15px; display: flex; gap: 6px; align-items: flex-start; }
+  .mine:first-of-type { border-top: none; }
+  .mine span { flex: 1; }
+  .full .sheet { max-height: 96vh; min-height: 70vh; border-radius: 18px 18px 0 0; }
+  .q-head { display: flex; align-items: center; gap: 8px; }
+  .q-head h2 { flex: 1; margin: 0; }
+  .q-prog { height: 4px; background: #eef1f5; border-radius: 2px; margin: 10px 0 14px; overflow: hidden; }
+  .q-prog i { display: block; height: 100%; background: var(--c); transition: width .3s; }
+  .q-tag { font-size: 12px; color: var(--sub); }
+  .q-zh { font-size: 21px; font-weight: 600; line-height: 1.5; margin: 6px 0 4px; }
+  .q-hint { font-size: 15px; color: #8a5300; background: #fffaf0; border-radius: 8px; padding: 6px 10px; margin: 8px 0; display: none; letter-spacing: .5px; }
+  .q-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .q-btns .btn { flex: 1; }
+  .q-fb { margin-top: 14px; border-top: 1px dashed var(--line); padding-top: 12px; display: none; }
+  .q-fb .row2 { margin: 6px 0; font-size: 15px; }
+  .q-fb .lab { font-size: 12px; color: var(--sub); display: block; }
+  .q-rate { display: none; gap: 8px; margin-top: 14px; }
+  .q-rate button { flex: 1; border: 1.5px solid var(--line); background: #fff; border-radius: 12px; padding: 10px 4px; font-size: 14px; font-family: inherit; cursor: pointer; line-height: 1.3; }
+  .q-rate button small { display: block; font-size: 11px; color: var(--sub); }
+  .q-rate button.rec { border-color: var(--c); background: var(--c2); font-weight: 600; }
+  .q-sum { text-align: center; padding: 20px 0; }
+  .q-sum .big { font-size: 40px; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .chips button { border: 1px solid var(--line); background: #fff; border-radius: 16px; padding: 4px 10px; font-size: 12px; font-family: inherit; cursor: pointer; }
+  .chips button.on { background: var(--c); color: #fff; border-color: var(--c); }
+  .sh-text { font-size: 20px; font-weight: 600; color: #0f2d5c; line-height: 1.5; margin: 6px 0 10px; }
+  .sh-text .ok { color: var(--green); } .sh-text .miss { color: var(--red); text-decoration: underline wavy; }
+  .sh-big { display: flex; justify-content: center; margin: 14px 0 6px; }
+  .sh-big .mic-sm { width: 72px; height: 72px; font-size: 30px; }
 </style>
 </head>
 <body>
 <header>
-  <h1>🗣️ 道地口說轉譯器<span class="ver">v1.1</span></h1>
+  <h1>🗣️ 道地口說轉譯器<span class="ver">v1.2</span></h1>
   <button class="icon-btn" id="menuBtn" aria-label="選單">⋮</button>
 </header>
 <div id="menu">
@@ -156,6 +213,11 @@
 <main>
   <div class="banner" id="keyBanner">還沒設定 AI 金鑰，無法轉成英文。<button class="btn sm ghost" data-act="keys">設定金鑰</button></div>
   <div class="banner" id="backupBanner">已經超過 7 天沒有備份了。<button class="btn sm ghost" data-act="share">立即備份</button></div>
+
+  <div class="stats" id="stats">
+    <div class="nums" id="statNums"></div>
+    <button class="btn sm pri" id="dueBtn" style="flex:none">📅 複習</button>
+  </div>
 
   <section class="card">
     <div class="row" style="justify-content: space-between; margin-bottom: 6px;">
@@ -179,6 +241,12 @@
     <div class="zh-box">
       <textarea id="zhInput" placeholder="語音辨識的中文會出現在這裡，有錯字可以直接用鍵盤修改；也可以直接打字。"></textarea>
       <div id="interim"></div>
+    </div>
+    <div class="try-row"><button class="btn sm ghost" id="tryBtn">🙋 先用英文說說看（再看道地說法）</button></div>
+    <div id="tryBox">
+      <div class="lbl">🙋 先用你自己的英文說一次，說錯沒關係，AI 會幫你比較、修正</div>
+      <div class="en-in"><textarea id="tryText" placeholder="Try it in English…"></textarea><button class="mic-sm" id="tryMic">🎤</button></div>
+      <div class="mini-hint" id="tryHint"></div>
     </div>
     <div class="actions">
       <button class="btn ghost" id="clearBtn" title="清空">✕ 清空</button>
@@ -261,6 +329,15 @@
       </select>
     </div>
 
+    <div class="set-h">📅 複習</div>
+    <div class="set-row">加入複習排程的句子
+      <select id="setSrs"><option value="star">只有 ⭐ 收藏的（建議）</option><option value="all">全部紀錄</option></select>
+      <small>依照「當天 → 1 天 → 3 天 → 7 天 → 14 天 → 30 天」自動安排複習；答對就延後，忘記就重來。</small>
+    </div>
+    <div class="set-row">每天收藏目標
+      <select id="setGoal"><option value="3">3 句</option><option value="5">5 句</option><option value="8">8 句</option><option value="10">10 句</option></select>
+    </div>
+
     <div class="set-h">🔊 朗讀聲音</div>
     <div class="set-row">語音
       <select id="setTts">
@@ -283,7 +360,8 @@
   <div class="sheet">
     <h2>▶️ 例句連續播放</h2>
     <div class="opt-row"><div class="lbl">範圍</div><div class="seg" data-opt="scope">
-      <button data-v="all">全部</button><button data-v="star">⭐ 收藏</button><button data-v="today">今天</button><button data-v="week">最近 7 天</button></div></div>
+      <button data-v="all">全部</button><button data-v="star">⭐ 收藏</button><button data-v="today">今天</button><button data-v="week">最近 7 天</button><button data-v="due">📅 待複習</button></div></div>
+    <div class="opt-row"><button class="btn sm ghost" id="pmShadow">🗣️ 一鍵設成跟讀模式（每句 3 次、間隔 5 秒、0.85x）</button></div>
     <div class="opt-row"><div class="lbl">播放內容</div><div class="seg" data-opt="content">
       <button data-v="main">只播主句</button><button data-v="alts">主句＋其他說法</button><button data-v="all">再加道地用語</button></div></div>
     <div class="opt-row"><div class="lbl">順序</div><div class="seg" data-opt="order">
@@ -297,6 +375,63 @@
     <div class="opt-row"><div class="lbl">語音：<span id="pmVoice"></span>　<a href="#" id="pmVoiceSet" style="color:var(--c);font-size:12px">更改</a></div></div>
     <p id="pmCount"></p>
     <div class="actions"><button class="btn ghost" data-close>取消</button><button class="btn pri" id="pmStart">開始播放</button></div>
+  </div>
+</div>
+
+<!-- 口說測驗 -->
+<div class="modal full" id="quizModal">
+  <div class="sheet">
+    <div class="q-head"><h2 id="qTitle">📅 口說複習</h2><span id="qCount" style="font-size:13px;color:var(--sub)"></span><button class="icon-btn" id="qClose" style="color:var(--sub)">✕</button></div>
+    <div class="q-prog"><i id="qProg"></i></div>
+    <div id="qBody">
+      <div class="q-tag" id="qTag"></div>
+      <div class="q-zh" id="qZh"></div>
+      <div class="q-hint" id="qHint"></div>
+      <div class="lbl" style="margin-top:12px">用英文說出來（或打字）：</div>
+      <div class="en-in"><textarea id="qText" placeholder="Say it in English…"></textarea><button class="mic-sm" id="qMic">🎤</button></div>
+      <div class="mini-hint" id="qMicHint"></div>
+      <div class="q-btns" id="qBtns">
+        <button class="btn ghost" id="qHintBtn">💡 提示</button>
+        <button class="btn ghost" id="qShow">🙈 看答案</button>
+        <button class="btn pri" id="qCheck">✅ 送出</button>
+      </div>
+      <div class="q-fb" id="qFb"></div>
+      <div class="q-rate" id="qRate">
+        <button data-g="0">😣 忘了<small>今天再考一次</small></button>
+        <button data-g="1">🤔 差一點<small>明天再複習</small></button>
+        <button data-g="2">😎 會了<small id="qNextLbl">延後複習</small></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 跟讀 -->
+<div class="modal full" id="shadowModal">
+  <div class="sheet">
+    <div class="q-head"><h2>🎙️ 跟讀練習</h2><button class="icon-btn" data-close style="color:var(--sub)">✕</button></div>
+    <p class="note" style="margin:6px 0 10px">先聽原音，再錄下你模仿的聲音。連語調、停頓、連音一起學。</p>
+    <div class="chips" id="shChips"></div>
+    <div class="sh-text" id="shText"></div>
+    <div class="tools" style="justify-content:center">
+      <button class="tool" id="shListen">🔊 聽原音</button><button class="tool" id="shSlow">🐢 慢速</button>
+      <button class="tool" id="shMine" disabled>▶ 聽我的錄音</button>
+    </div>
+    <div class="sh-big"><button class="mic-sm" id="shMic">🎤</button></div>
+    <div class="mini-hint" id="shHint" style="text-align:center">按 🎤 開始跟讀，說完會自動停止</div>
+    <div id="shResult" style="text-align:center;margin-top:8px"></div>
+  </div>
+</div>
+
+<!-- 造句 -->
+<div class="modal" id="makeModal">
+  <div class="sheet">
+    <h2>✍️ 換字造句</h2>
+    <p class="note">用這個片語，說一句跟<b>你自己的生活</b>有關的話。能自己造出新句子，才是真的會用。</p>
+    <div class="phrase" style="border:none"><b id="mkPhrase"></b><div id="mkZh"></div></div>
+    <div class="en-in" style="margin-top:8px"><textarea id="mkText" placeholder="Make your own sentence…"></textarea><button class="mic-sm" id="mkMic">🎤</button></div>
+    <div class="mini-hint" id="mkHint"></div>
+    <div id="mkResult"></div>
+    <div class="actions"><button class="btn ghost" data-close>關閉</button><button class="btn pri" id="mkCheck">✅ 請 AI 檢查</button></div>
   </div>
 </div>
 
@@ -321,7 +456,7 @@
 
 <script>
 'use strict';
-const VERSION = '1.1';
+const VERSION = '1.2';
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -334,6 +469,7 @@ try { hist = JSON.parse(localStorage.getItem(HIST_KEY)) || []; } catch (e) { his
 const DEFAULTS = {
   tone: 'friend', accent: 'US', lang: 'zh-TW', script: '繁體中文', autoSpeak: false, autoGo: true,
   stt: 'auto', silence: 2.5,
+  srsScope: 'star', dailyGoal: 5,
   tts: 'auto', voice: '', fvoice: 'af_heart', gvoice: 'Kore', rate: 1.0,
   play: { scope: 'all', content: 'alts', order: 'new', limit: 20, repeat: 2, gap: 2 }
 };
@@ -446,7 +582,7 @@ const TONE_DESC = {
   work: 'friendly everyday small talk with a coworker (natural and casual, but nothing rude or too slangy)',
   polite: 'a polite but still natural spoken conversation, e.g. with a client, a teacher or someone you just met (warm, not stiff, not written-style)'
 };
-function buildPrompt(zh, extra) {
+function buildPrompt(zh, extra, attempt) {
   const accent = settings.accent === 'UK' ? 'British' : 'American';
   const sc = settings.script;
   return `The user is a native Chinese speaker practicing spoken English. Below is what they SAID in Chinese, captured by speech recognition. It may contain recognition errors (wrong homophones), filler words (呃、那個、就是、然後), repetitions or self-corrections.
@@ -481,7 +617,12 @@ Return JSON only, in exactly this shape (all explanations in ${sc}):
     {"chinglish": "a literal translation a Chinese speaker would likely say", "why": "為什麼聽起來不道地（${sc}，一句話）"}
   ]
 }
-Give 2-4 phrases and 0-2 avoid items (only when there is a typical Chinglish trap).`;
+Give 2-4 phrases and 0-2 avoid items (only when there is a typical Chinglish trap).${attempt ? `
+
+The learner first TRIED to say it in English by themselves (possibly via speech recognition, so ignore capitalization/punctuation):
+"""${attempt}"""
+Also add this field to the JSON:
+"attempt": {"score": 0-100 (how natural and correct their try is), "good": "做得好的地方（${sc}，一句話；沒有就空字串）", "fix": "最主要的問題與怎麼改（${sc}，一兩句）", "fixed": "their attempt minimally corrected so it sounds natural (keep their wording where possible)"}` : ''}`;
 }
 
 // ================= 語音輸入 =================
@@ -525,7 +666,8 @@ function setRecUI(on, level) {
 function afterInput() {
   const has = zhInput.value.trim();
   if (!micHint.classList.contains('err')) hint(has ? '辨識完成，有錯字可以直接修改' : '沒有聽到內容，請再試一次', !has);
-  if (has && settings.autoGo && !micHint.classList.contains('err')) doTranslate();
+  if (has && settings.autoGo && !tryOpen() && !micHint.classList.contains('err')) doTranslate();
+  else if (has && tryOpen()) $('#tryHint').textContent = '👉 現在用英文試著說一次（按 🎤），再按「轉成道地英文」';
 }
 
 // ---------- Whisper：錄音 + 靜音偵測 ----------
@@ -605,15 +747,16 @@ function cleanTranscript(t) {
 }
 const whisperLang = () => settings.lang.startsWith('yue') ? 'yue' : 'zh';
 const whisperPrompt = () => settings.lang.startsWith('yue') ? '以下係廣東話口語。' : settings.script === '简体中文' || settings.lang.includes('Hans') ? '以下是普通话的口语句子，请加上标点。' : '以下是台灣華語的口語句子，請使用繁體中文並加上標點。';
-async function transcribe(blob, mime) {
+async function transcribe(blob, mime, lang) {
+  const en = lang === 'en';
   const ext = mime.includes('mp4') ? 'm4a' : mime.includes('ogg') ? 'ogg' : 'webm';
   const errs = [];
   if (getKey('groq')) {
     for (const model of ['whisper-large-v3', 'whisper-large-v3-turbo']) {
       try {
         const fd = new FormData();
-        fd.append('file', blob, 'speech.' + ext); fd.append('model', model); fd.append('language', whisperLang());
-        fd.append('prompt', whisperPrompt()); fd.append('response_format', 'json'); fd.append('temperature', '0');
+        fd.append('file', blob, 'speech.' + ext); fd.append('model', model); fd.append('language', en ? 'en' : whisperLang());
+        if (!en) fd.append('prompt', whisperPrompt()); fd.append('response_format', 'json'); fd.append('temperature', '0');
         const r = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', { method: 'POST', headers: { Authorization: 'Bearer ' + getKey('groq') }, body: fd });
         if (!r.ok) { let m = 'HTTP ' + r.status; try { m = (await r.json()).error.message || m; } catch (e) {} const er = new Error(m); er.status = r.status; throw er; }
         return cleanTranscript((await r.json()).text);
@@ -623,7 +766,7 @@ async function transcribe(blob, mime) {
   if (getKey('freeai')) {
     try {
       const key = getKey('freeai'), fd = new FormData();
-      fd.append('file', blob, 'speech.' + ext); fd.append('language', whisperLang());
+      fd.append('file', blob, 'speech.' + ext); fd.append('language', en ? 'en' : whisperLang());
       const r = await fetch(FREEAI_BASE + '/v1/stt/transcribe/', { method: 'POST', headers: { Authorization: 'Bearer ' + key }, body: fd });
       if (!r.ok) throw new Error('HTTP ' + r.status);
       let j = await r.json();
@@ -721,7 +864,8 @@ async function doTranslate(extra, label) {
   box.innerHTML = `<div class="loading"><span class="spin"></span>${label ? '正在改成「' + esc(label) + '」…' : '正在想母語人士會怎麼說…'}</div>`;
   box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   try {
-    const r = await aiJSON(buildPrompt(zh, extra));
+    const attempt = !extra && tryOpen() ? $('#tryText').value.trim() : '';
+    const r = await aiJSON(buildPrompt(zh, extra, attempt));
     if (!r.native) throw new Error('AI 沒有給出英文');
     const entry = {
       id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ts: Date.now(), zh,
@@ -731,10 +875,15 @@ async function doTranslate(extra, label) {
       avoid: (r.avoid || []).filter(a => a && a.chinglish).slice(0, 3),
       tone: settings.tone, accent: settings.accent, star: false, provider: r._provider
     };
-    if (current && current.zh === zh && hist[0] && hist[0].id === current.id) { entry.star = current.star; entry.ts = current.ts; hist[0] = entry; }
-    else hist.unshift(entry);
+    if (attempt && r.attempt) entry.attempt = { text: attempt, score: +r.attempt.score || 0, good: r.attempt.good || '', fix: r.attempt.fix || '', fixed: r.attempt.fixed || '' };
+    if (current && current.zh === zh && hist[0] && hist[0].id === current.id) {
+      ['star', 'ts', 'srs', 'used', 'usedAt', 'mine', 'shadow', 'savedNb'].forEach(k => { if (current[k] !== undefined) entry[k] = current[k]; });
+      if (!entry.attempt && current.attempt) entry.attempt = current.attempt;
+      hist[0] = entry;
+    } else { hist.unshift(entry); bump('learned'); if (settings.srsScope === 'all') ensureSrs(entry); }
+    if (attempt) { $('#tryText').value = ''; $('#tryHint').textContent = ''; }
     saveHist(); current = entry;
-    renderResult(entry); renderHistory();
+    renderResult(entry); renderHistory(); renderStats();
     if (settings.autoSpeak) speak(entry.native);
   } catch (e) {
     box.innerHTML = `<div class="loading" style="color:var(--red)">轉譯失敗：${esc(e.message)}<br><button class="btn sm ghost" style="margin-top:10px" id="retryBtn">再試一次</button></div>`;
@@ -745,20 +894,32 @@ async function doTranslate(extra, label) {
 function renderResult(en) {
   const box = $('#result'); box.style.display = 'block';
   const alts = en.alternatives.map(a => `<div class="alt"><span class="tag">${esc(a.label || '其他說法')}</span><span class="en">${esc(a.en)}</span><button class="say" data-say="${esc(a.en)}">🔊</button></div>`).join('');
-  const phr = en.phrases.map(p => `<div class="phrase"><b>${esc(p.en)}</b> <button class="say" data-say="${esc(p.en)}" style="font-size:15px">🔊</button><div>${esc(p.zh)}</div></div>`).join('');
+  const phr = en.phrases.map((p, i) => `<div class="phrase"><b>${esc(p.en)}</b> <button class="say" data-say="${esc(p.en)}" style="font-size:15px">🔊</button><button class="tool" data-make="${en.id}:${i}" style="padding:2px 9px;font-size:12px">✍️ 造句</button><div>${esc(p.zh)}</div></div>`).join('');
+  const mine = (en.mine || []).map(m => `<div class="mine"><span>${esc(m.en)}</span><button class="say" data-say="${esc(m.en)}">🔊</button></div>`).join('');
+  const at = en.attempt;
+  const atHtml = at ? `<div class="attempt"><div>🙋 你的說法 <span class="score ${scoreCls(at.score)}">${at.score} 分</span></div><div class="yours">${esc(at.text)}</div>${at.good ? `<div>👍 ${esc(at.good)}</div>` : ''}${at.fix ? `<div>🔧 ${esc(at.fix)}</div>` : ''}${at.fixed ? `<div class="fixline">✏️ ${esc(at.fixed)} <button class="say" data-say="${esc(at.fixed)}">🔊</button></div>` : ''}<div style="font-size:12px;color:var(--sub);margin-top:4px">👇 下面是母語人士最自然的說法，比較看看差在哪裡</div></div>` : '';
   const av = en.avoid.map(a => `<div class="avoid">❌ <s>${esc(a.chinglish)}</s><div>${esc(a.why)}</div></div>`).join('');
   box.innerHTML = `
     ${en.understood ? `<div class="understood">🧠 你的意思：${esc(en.understood)}</div>` : ''}
+    ${atHtml}
     <div class="native" id="nativeText">${esc(en.native)}</div>
     <div class="tools">
       <button class="tool" data-say="${esc(en.native)}">🔊 聽</button>
       <button class="tool" data-slow="${esc(en.native)}">🐢 慢速</button>
+      <button class="tool" data-shadow="${en.id}">🎙️ 跟讀</button>
       <button class="tool" data-playone="${en.id}">▶ 整組播放</button>
-      <button class="tool" data-copy="${esc(en.native)}">📋 複製</button>
       <button class="tool ${en.star ? 'on' : ''}" data-star="${en.id}">${en.star ? '⭐ 已收藏' : '☆ 收藏'}</button>
     </div>
+    <div class="tools" style="margin-top:6px">
+      <button class="tool" data-quizone="${en.id}">🧠 考考我</button>
+      <button class="tool ${usedToday(en) ? 'on' : ''}" data-used="${en.id}">${usedToday(en) ? '✅ 今天用過了' : '✅ 我今天用過了'}${en.used ? `（${en.used}）` : ''}</button>
+      <button class="tool" data-nb="${en.id}">${en.savedNb ? '📖 已存到筆記本' : '📖 存到英語筆記本'}</button>
+      <button class="tool" data-copy="${esc(en.native)}">📋 複製</button>
+    </div>
+    ${srsLine(en)}
     ${alts ? `<div class="sec"><h3>💬 其他說法</h3>${alts}</div>` : ''}
-    ${phr ? `<div class="sec"><h3>🔑 道地用語</h3>${phr}</div>` : ''}
+    ${phr ? `<div class="sec"><h3>🔑 道地用語　<span style="font-weight:400">按 ✍️ 用它自己造句</span></h3>${phr}</div>` : ''}
+    ${mine ? `<div class="sec"><h3>✍️ 我的造句</h3>${mine}</div>` : ''}
     ${av ? `<div class="sec"><h3>⚠️ 中式英文陷阱</h3>${av}</div>` : ''}
     <div class="tweak">
       <button class="tool" data-tweak="casual">😎 再口語一點</button>
@@ -775,12 +936,17 @@ const TWEAKS = {
 };
 
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-say],[data-slow],[data-copy],[data-star],[data-tweak],[data-act],[data-close],[data-playone]');
+  const t = e.target.closest('[data-say],[data-slow],[data-copy],[data-star],[data-tweak],[data-act],[data-close],[data-playone],[data-shadow],[data-used],[data-nb],[data-quizone],[data-make]');
   if (!t) return;
   if (t.dataset.say !== undefined) { e.stopPropagation(); speak(t.dataset.say); }
   else if (t.dataset.slow !== undefined) speak(t.dataset.slow, 0.7);
   else if (t.dataset.copy !== undefined) copyText(t.dataset.copy);
   else if (t.dataset.star) { e.stopPropagation(); toggleStar(t.dataset.star); }
+  else if (t.dataset.shadow) { const h = hist.find(x => x.id === t.dataset.shadow); if (h) openShadow(h); }
+  else if (t.dataset.used) markUsed(t.dataset.used);
+  else if (t.dataset.nb) { const h = hist.find(x => x.id === t.dataset.nb); if (h) saveToNotebook(h); }
+  else if (t.dataset.quizone) { const h = hist.find(x => x.id === t.dataset.quizone); if (h) startQuiz([h], '🧠 考考我'); }
+  else if (t.dataset.make) { const [id, i] = t.dataset.make.split(':'); const h = hist.find(x => x.id === id); if (h && h.phrases[+i]) openMake(h, +i); }
   else if (t.dataset.playone) { const h = hist.find(x => x.id === t.dataset.playone); if (h) startPlayer(itemsOf(h, 'all')); }
   else if (t.dataset.tweak) { const [l, x] = TWEAKS[t.dataset.tweak]; if (current) zhInput.value = current.zh; doTranslate(x, l); }
   else if (t.dataset.act) { $('#menu').style.display = 'none'; doAct(t.dataset.act); }
@@ -792,7 +958,9 @@ async function copyText(s) {
 }
 function toggleStar(id) {
   const it = hist.find(h => h.id === id); if (!it) return;
-  it.star = !it.star; saveHist();
+  it.star = !it.star;
+  if (it.star) { bump('starred'); if (!it.srs) ensureSrs(it); }
+  saveHist(); renderStats();
   if (current && current.id === id) { current.star = it.star; renderResult(current); }
   renderHistory(); toast(it.star ? '已加入收藏' : '已取消收藏');
 }
@@ -1010,11 +1178,13 @@ function itemsOf(h, content) {
   const out = [{ id: h.id, en: h.native, zh, tag: '主句' }];
   if (content === 'alts' || content === 'all') h.alternatives.forEach(a => out.push({ id: h.id, en: a.en, zh, tag: a.label || '其他說法' }));
   if (content === 'all') h.phrases.forEach(p => out.push({ id: h.id, en: p.en, zh: p.zh, tag: '道地用語' }));
+  if (content === 'all') (h.mine || []).forEach(m => out.push({ id: h.id, en: m.en, zh: m.phrase ? '我的造句：' + m.phrase : '我的造句', tag: '我的造句' }));
   return out;
 }
 function buildList() {
   const p = settings.play, now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-  let hs = hist.filter(h => p.scope === 'star' ? h.star : p.scope === 'today' ? h.ts >= today : p.scope === 'week' ? h.ts >= today - 6 * 864e5 : true);
+  const dueIds = p.scope === 'due' ? new Set(dueList().map(h => h.id)) : null;
+  let hs = hist.filter(h => p.scope === 'due' ? dueIds.has(h.id) : p.scope === 'star' ? h.star : p.scope === 'today' ? h.ts >= today : p.scope === 'week' ? h.ts >= today - 6 * 864e5 : true);
   if (p.order === 'old') hs = hs.slice().reverse();
   if (p.order === 'random') {
     hs = hs.slice(); for (let i = hs.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [hs[i], hs[j]] = [hs[j], hs[i]]; }
@@ -1043,6 +1213,7 @@ $('#playModal').addEventListener('click', e => {
 $('#pmVoiceSet').onclick = e => { e.preventDefault(); $('#playModal').classList.remove('show'); openSettings(); };
 $('#pmStart').onclick = () => { $('#playModal').classList.remove('show'); startPlayer(buildList()); };
 $('#fab').onclick = openPlayModal;
+$('#pmShadow').onclick = () => { Object.assign(settings.play, { repeat: 3, gap: 5 }); settings.rate = 0.85; saveSet(); updateSpeed(); refreshPlayModal(); toast('已設成跟讀模式：聽一次、跟著說一次'); };
 
 // 背景播放：讓 Android 把 App 當成正在播音樂（手機語音模式用）
 function makeQuietWav(seconds = 10, rate = 8000) {
@@ -1251,7 +1422,7 @@ function renderHistory() {
     <div class="item" data-open="${h.id}">
       <div class="en">${esc(h.native)}</div>
       <div class="zh">${esc(h.zh)}</div>
-      <div class="meta"><span>${fmtTime(h.ts)}・${TONE_NAME[h.tone] || ''}</span><span class="sp"></span>
+      <div class="meta"><span>${fmtTime(h.ts)}・${TONE_NAME[h.tone] || ''}</span> ${badgesOf(h)}<span class="sp"></span>
         <button class="say" data-say="${esc(h.native)}">🔊</button>
         <button class="say" data-star="${h.id}">${h.star ? '⭐' : '☆'}</button>
         <button class="say" data-del="${h.id}">🗑️</button></div>
@@ -1319,6 +1490,7 @@ function openSettings() {
   $('#setTts').value = settings.tts; fillVoiceSelect();
   $('#setRate').value = settings.rate; $('#rateVal').textContent = (+settings.rate).toFixed(2) + 'x';
   $('#setAutoSpeak').checked = settings.autoSpeak;
+  $('#setSrs').value = settings.srsScope; $('#setGoal').value = String(settings.dailyGoal);
   $('#setModal').classList.add('show');
 }
 $('#setStt').onchange = e => { settings.stt = e.target.value; saveSet(); updateModeTag(); if (e.target.value === 'whisper' && !canWhisper()) toast('Whisper 需要 Groq（或 Free.ai）金鑰', 3000); };
@@ -1329,6 +1501,8 @@ $('#setTts').onchange = e => { settings.tts = e.target.value; saveSet(); fillVoi
 $('#setVoice').onchange = e => { const en = ttsEngine(); if (en === 'freeai') settings.fvoice = e.target.value; else if (en === 'gemini') settings.gvoice = e.target.value; else settings.voice = e.target.value; saveSet(); };
 $('#setRate').oninput = e => { settings.rate = +e.target.value; $('#rateVal').textContent = settings.rate.toFixed(2) + 'x'; saveSet(); updateSpeed(); if (aiAudio) aiAudio.playbackRate = settings.rate; };
 $('#setAutoSpeak').onchange = e => { settings.autoSpeak = e.target.checked; saveSet(); };
+$('#setSrs').onchange = e => { settings.srsScope = e.target.value; saveSet(); renderStats(); renderHistory(); };
+$('#setGoal').onchange = e => { settings.dailyGoal = +e.target.value; saveSet(); renderStats(); };
 $('#testVoice').onclick = async () => { const b = $('#testVoice'); b.disabled = true; await speak("Hey! No worries, I'm totally down for that."); b.disabled = false; };
 $('#autoGo').checked = settings.autoGo;
 $('#autoGo').onchange = e => { settings.autoGo = e.target.checked; saveSet(); };
@@ -1375,8 +1549,417 @@ function updateBanners() {
   $('#backupBanner').style.display = hist.length >= 5 && Date.now() - last > 7 * 864e5 ? 'block' : 'none';
 }
 
+// ================= v1.2 學習功能 =================
+const DAY = 864e5;
+const INTERVALS = [0, 1, 3, 7, 14, 30, 60];     // Lv0 當天 → Lv1 1 天 → … → Lv6 60 天（熟記）
+const pad2 = n => String(n).padStart(2, '0');
+const dayStart = (t = Date.now()) => { const d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); };
+const dkey = (t = Date.now()) => { const d = new Date(t); return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; };
+const scoreCls = s => s >= 80 ? 'hi' : s >= 55 ? 'mid' : 'lo';
+
+// ---- 每日紀錄與連續天數 ----
+const DAILY_KEY = 'speak_daily_v1';
+let daily = {};
+try { daily = JSON.parse(localStorage.getItem(DAILY_KEY)) || {}; } catch (e) { daily = {}; }
+function bump(k, n = 1) {
+  const d = daily[dkey()] || (daily[dkey()] = {});
+  d[k] = (d[k] || 0) + n;
+  const keys = Object.keys(daily).sort(); while (keys.length > 120) delete daily[keys.shift()];
+  localStorage.setItem(DAILY_KEY, JSON.stringify(daily));
+}
+const active = d => d && ((d.learned || 0) + (d.reviewed || 0) + (d.shadow || 0) + (d.used || 0) + (d.made || 0)) > 0;
+function streak() {
+  let n = 0, t = Date.now();
+  if (!active(daily[dkey(t)])) t -= DAY;           // 今天還沒練習，從昨天開始算
+  while (active(daily[dkey(t)])) { n++; t -= DAY; }
+  return n;
+}
+function renderStats() {
+  const d = daily[dkey()] || {}, goal = +settings.dailyGoal || 5, st = d.starred || 0, due = dueList().length;
+  $('#statNums').innerHTML = `🔥 連續 <b>${streak()}</b> 天　📝 新學 <b>${d.learned || 0}</b>　🔁 複習 <b>${d.reviewed || 0}</b>${d.used ? `　✅ 用出去 <b>${d.used}</b>` : ''}<br>⭐ 今天收藏 <b>${st}</b> / ${goal} <span class="goal"><i style="width:${Math.min(100, st / goal * 100)}%"></i></span>${st >= goal ? ' 🎯 達標' : ''}`;
+  const b = $('#dueBtn');
+  b.textContent = due ? `📅 待複習 ${due}` : '🎉 複習完了';
+  b.classList.toggle('done', !due);
+}
+$('#dueBtn').onclick = () => {
+  const list = dueList();
+  if (list.length) { startQuiz(list, '📅 今日複習'); return; }
+  const any = hist.some(h => inSrs(h));
+  toast(any ? '今天的複習都完成了，明天再來！🎉' : settings.srsScope === 'star' ? '按 ⭐ 收藏句子，就會自動排進複習' : '先說幾句話，就會自動排進複習', 3000);
+};
+
+// ---- 間隔複習排程 ----
+const inSrs = h => settings.srsScope === 'all' || h.star;
+function ensureSrs(h) { if (!h.srs) h.srs = { lv: 0, due: dayStart(), n: 0, ok: 0 }; return h.srs; }
+function dueList() {
+  const end = dayStart() + DAY;
+  if (settings.srsScope === 'all') hist.forEach(ensureSrs);
+  return hist.filter(h => inSrs(h) && h.srs && h.srs.due < end)
+    .sort((a, b) => a.srs.due - b.srs.due || a.srs.lv - b.srs.lv);
+}
+function grade(h, g) {   // g：0 忘了、1 差一點、2 會了
+  const s = ensureSrs(h);
+  s.n++; s.last = Date.now();
+  if (g === 2) { s.lv = Math.min(s.lv + 1, 6); s.ok++; s.due = dayStart() + INTERVALS[s.lv] * DAY; }
+  else if (g === 1) { s.due = dayStart() + DAY; }
+  else { s.lv = 0; s.due = dayStart(); }
+  bump('reviewed'); saveHist();
+}
+const lvName = lv => lv >= 6 ? '🏆 熟記' : lv === 0 ? '新句' : `Lv${lv}`;
+function dueLabel(due) { const n = Math.round((dayStart(due) - dayStart()) / DAY); return n <= 0 ? '今天' : n === 1 ? '明天' : `${n} 天後`; }
+function srsLine(h) {
+  if (!inSrs(h)) return `<div style="font-size:12px;color:var(--sub);margin-top:8px">⭐ 收藏後會自動排進複習（當天 → 1 → 3 → 7 → 14 → 30 天）</div>`;
+  const s = ensureSrs(h);
+  return `<div style="font-size:12px;color:var(--sub);margin-top:8px">📅 複習進度：${lvName(s.lv)}・下次複習：${dueLabel(s.due)}${s.n ? `・已複習 ${s.n} 次` : ''}</div>`;
+}
+function badgesOf(h) {
+  const b = [];
+  if (h.srs && inSrs(h)) {
+    if (h.srs.lv >= 6) b.push('<span class="badge master">🏆 熟記</span>');
+    else if (h.srs.due < dayStart() + DAY) b.push('<span class="badge due">📅 待複習</span>');
+    else b.push(`<span class="badge">📅 ${dueLabel(h.srs.due)}</span>`);
+  }
+  if (h.attempt) b.push(`<span class="badge">🙋 ${h.attempt.score}</span>`);
+  if (h.shadow) b.push(`<span class="badge">🎙️ ${h.shadow.best}%</span>`);
+  if (h.used) b.push(`<span class="badge">✅ ${h.used}</span>`);
+  if (h.mine && h.mine.length) b.push(`<span class="badge">✍️ ${h.mine.length}</span>`);
+  return b.length ? `<span class="badges">${b.join('')}</span>` : '';
+}
+const usedToday = h => (h.usedAt || 0) >= dayStart();
+function markUsed(id) {
+  const h = hist.find(x => x.id === id); if (!h) return;
+  if (usedToday(h)) { toast('今天已經記錄過了 👍'); return; }
+  h.used = (h.used || 0) + 1; h.usedAt = Date.now(); bump('used');
+  let graded = false;
+  if (inSrs(h) && h.srs && h.srs.due < dayStart() + DAY) { grade(h, 2); graded = true; }
+  saveHist();
+  if (current && current.id === id) renderResult(h);
+  renderHistory(); renderStats();
+  toast('太棒了！真的用出去的句子最難忘 🎉' + (graded ? '（已算一次複習）' : ''), 2800);
+}
+
+// ---- 英文錄音（測驗、跟讀、造句、先試說共用）：說完自動停止 ----
+let enRec = null;
+const wordsOf = s => String(s || '').toLowerCase().replace(/[’‘]/g, "'").replace(/[^a-z0-9' ]+/g, ' ').split(/\s+/).filter(Boolean);
+async function recordEnglish(btn, hintEl, opts = {}) {
+  if (enRec) { enRec.stop(); return null; }   // 再按一次＝停止
+  if (recording || sttBusy) return null;
+  const say = (m, err) => { hintEl.textContent = m; hintEl.classList.toggle('err', !!err); };
+  if (!navigator.onLine) { say('語音辨識需要網路，請先用打字', true); return null; }
+  stopAllAudio();
+  if (canWhisper()) return recEnWhisper(btn, say, opts);
+  if (SR) return recEnChrome(btn, say);
+  say('這個瀏覽器不支援語音輸入，請直接打字', true); return null;
+}
+function recEnWhisper(btn, say, opts) {
+  return new Promise(async resolve => {
+    let stream;
+    try { stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }); }
+    catch (e) { say('沒有麥克風權限：請允許麥克風', true); resolve(null); return; }
+    const mime = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus'].find(m => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(m)) || '';
+    let mr; try { mr = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined); } catch (e) { stream.getTracks().forEach(t => t.stop()); say('無法錄音：' + e.message, true); resolve(null); return; }
+    const type = mr.mimeType || mime || 'audio/webm', chunks = [];
+    let ctx = null, an = null, buf = null;
+    try { ctx = new (window.AudioContext || window.webkitAudioContext)(); an = ctx.createAnalyser(); an.fftSize = 1024; ctx.createMediaStreamSource(stream).connect(an); buf = new Float32Array(an.fftSize); } catch (e) {}
+    const st = { t0: performance.now(), last: performance.now(), vms: 0, heard: !an, noise: 0, calib: [], reason: '' };
+    let stopped = false, timer = 0, lastT = st.t0;
+    const reset = () => { btn.classList.remove('rec', 'busy'); btn.textContent = '🎤'; btn.style.removeProperty('--lv'); };
+    const stop = reason => { if (stopped) return; stopped = true; clearInterval(timer); st.reason = reason; btn.classList.remove('rec'); btn.classList.add('busy'); btn.textContent = '⏳'; try { mr.state !== 'inactive' ? mr.stop() : finish(); } catch (e) { finish(); } };
+    enRec = { stop: () => stop('manual') };
+    async function finish() {
+      enRec = null;
+      try { stream.getTracks().forEach(t => t.stop()); } catch (e) {}
+      try { ctx && ctx.close(); } catch (e) {}
+      if (!st.heard && st.reason !== 'manual') { reset(); say('沒有聽到聲音，請再試一次', true); resolve(null); return; }
+      const blob = new Blob(chunks, { type });
+      if (blob.size < 1500) { reset(); say('錄音太短，請再試一次', true); resolve(null); return; }
+      say('🧠 辨識中…');
+      try { const text = await transcribe(blob, type, 'en'); reset(); say(''); resolve({ text, blob }); }
+      catch (e) { reset(); say('辨識失敗：' + e.message, true); resolve(opts.keepAudio ? { text: '', blob } : null); }
+    }
+    mr.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+    mr.onstop = finish;
+    mr.start(500);
+    btn.classList.add('rec'); btn.textContent = '■';
+    const sil = +settings.silence ? Math.max(1.5, +settings.silence) : 0;
+    timer = setInterval(() => {
+      const now = performance.now(), dt = now - lastT, el = now - st.t0; lastT = now;
+      if (an) {
+        an.getFloatTimeDomainData(buf);
+        let s = 0; for (let i = 0; i < buf.length; i++) s += buf[i] * buf[i];
+        const rms = Math.sqrt(s / buf.length);
+        if (el < 500) { st.calib.push(rms); st.noise = Math.min(0.03, st.calib.reduce((a, b) => a + b, 0) / st.calib.length); }
+        const th = Math.max(0.012, st.noise * 2.2);
+        if (rms > th) { st.vms += dt; st.last = now; if (st.vms > 250) st.heard = true; }
+        btn.style.setProperty('--lv', Math.min(1, rms / (th * 4)).toFixed(2));
+      }
+      say(`🎙️ 錄音中 ${fmtSec(el)}　` + (sil && st.heard ? '說完會自動停止' : '說完再按 ■'));
+      if (sil && st.heard && now - st.last > sil * 1000) stop('silence');
+      else if (!st.heard && an && el > WAIT_FIRST_MS) stop('nothing');
+      else if (el > 90000) stop('max');
+    }, 100);
+  });
+}
+function recEnChrome(btn, say) {
+  return new Promise(resolve => {
+    const rec = new SR(); rec.lang = settings.accent === 'UK' ? 'en-GB' : 'en-US'; rec.continuous = false; rec.interimResults = true;
+    let fin = '', it = '', err = null, done = false;
+    enRec = { stop: () => { try { rec.stop(); } catch (e) {} } };
+    btn.classList.add('rec'); btn.textContent = '■'; say('🎙️ 聆聽中…說完會自動停止');
+    rec.onresult = e => { let f = '', i2 = ''; for (let i = 0; i < e.results.length; i++) { const r = e.results[i]; if (r.isFinal) f = mergeSeg(f, r[0].transcript); else i2 = mergeSeg(i2, r[0].transcript); } fin = f; it = i2; say('🎙️ ' + (fin || it)); };
+    rec.onerror = e => { if (e.error !== 'no-speech' && e.error !== 'aborted') err = e.error; };
+    rec.onend = () => {
+      if (done) return; done = true; enRec = null; btn.classList.remove('rec'); btn.textContent = '🎤';
+      const text = (fin || it).trim();
+      if (!text) { say(err === 'not-allowed' ? '沒有麥克風權限' : '沒有聽到內容，請再試一次', true); resolve(null); return; }
+      say(''); resolve({ text, blob: null });
+    };
+    try { rec.start(); } catch (e) { done = true; enRec = null; btn.classList.remove('rec'); btn.textContent = '🎤'; say('語音啟動失敗', true); resolve(null); }
+  });
+}
+// 字詞比對（跟讀、離線測驗用）
+function wordDiff(target, heard) {
+  const a = wordsOf(target), b = wordsOf(heard);
+  const near = (x, y) => x === y || (x.length > 3 && y.length > 3 && editDist(x, y) <= 1) || x.replace(/'/g, '') === y.replace(/'/g, '');
+  const L = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0));
+  for (let i = a.length - 1; i >= 0; i--) for (let j = b.length - 1; j >= 0; j--) L[i][j] = near(a[i], b[j]) ? L[i + 1][j + 1] + 1 : Math.max(L[i + 1][j], L[i][j + 1]);
+  const ok = new Array(a.length).fill(false); let i = 0, j = 0;
+  while (i < a.length && j < b.length) { if (near(a[i], b[j])) { ok[i] = true; i++; j++; } else if (L[i + 1][j] >= L[i][j + 1]) i++; else j++; }
+  return { ok, acc: a.length ? Math.round(ok.filter(Boolean).length / a.length * 100) : 0 };
+}
+function editDist(x, y) { const d = Array.from({ length: x.length + 1 }, (_, i) => [i]); for (let j = 1; j <= y.length; j++) d[0][j] = j; for (let i = 1; i <= x.length; i++) for (let j = 1; j <= y.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (x[i - 1] === y[j - 1] ? 0 : 1)); return d[x.length][y.length]; }
+function markWords(text, ok) { let k = 0; return String(text).split(/(\s+)/).map(tok => { if (/^\s+$/.test(tok) || !wordsOf(tok).length) return esc(tok); const cls = ok[k++] ? 'ok' : 'miss'; return `<span class="${cls}">${esc(tok)}</span>`; }).join(''); }
+
+// ---- 先用英文試說 ----
+const tryOpen = () => $('#tryBox').style.display === 'block';
+function setTry(o) {
+  $('#tryBox').style.display = o ? 'block' : 'none';
+  $('#tryBtn').textContent = o ? '🙋 收起「先試說」' : '🙋 先用英文說說看（再看道地說法）';
+  settings.tryFirst = o; saveSet();
+  if (o && !$('#tryText').value) $('#tryHint').textContent = '步驟：① 說（或打）中文 → ② 在這裡用英文試著說 → ③ 按「轉成道地英文」比較';
+}
+$('#tryBtn').onclick = () => setTry(!tryOpen());
+$('#tryMic').onclick = async () => {
+  const r = await recordEnglish($('#tryMic'), $('#tryHint'));
+  if (r && r.text) { $('#tryText').value = r.text; $('#tryHint').textContent = '👍 好了！按「轉成道地英文」看看母語人士怎麼說'; }
+};
+
+// ---- 口說測驗（看中文說英文）----
+const Q = { list: [], i: 0, res: [], tries: {}, hintLv: 0, ans: '' };
+function startQuiz(list, title) {
+  if (!list.length) { toast('目前沒有要複習的句子'); return; }
+  stopAllAudio();
+  Object.assign(Q, { list: list.slice(), i: 0, res: [], tries: {}, title });
+  $('#qTitle').textContent = title;
+  $('#quizModal').classList.add('show');
+  showQ();
+}
+function showQ() {
+  const body = $('#qBody');
+  if (Q.i >= Q.list.length) { showSummary(); return; }
+  const sum = $('#qSum'); if (sum) sum.remove();
+  body.style.display = '';
+  const h = Q.list[Q.i];
+  Q.hintLv = 0; Q.ans = '';
+  $('#qCount').textContent = `${Q.i + 1} / ${Q.list.length}`;
+  $('#qProg').style.width = `${Q.i / Q.list.length * 100}%`;
+  $('#qTag').textContent = `${TONE_NAME[h.tone] || ''}${h.srs ? '・' + lvName(h.srs.lv) : ''}${Q.tries[h.id] ? '・再試一次' : ''}`;
+  $('#qZh').textContent = h.understood || h.zh;
+  $('#qHint').style.display = 'none'; $('#qHint').textContent = '';
+  $('#qText').value = ''; $('#qMicHint').textContent = '按 🎤 用說的，說完會自動停止'; $('#qMicHint').classList.remove('err');
+  $('#qFb').style.display = 'none'; $('#qFb').innerHTML = '';
+  $('#qRate').style.display = 'none'; $('#qBtns').style.display = 'flex';
+  $('#qRate').querySelectorAll('button').forEach(b => b.classList.remove('rec'));
+  const lv = h.srs ? h.srs.lv : 0;
+  $('#qNextLbl').textContent = `${INTERVALS[Math.min(lv + 1, 6)]} 天後再複習`;
+}
+$('#qHintBtn').onclick = () => {
+  const h = Q.list[Q.i]; if (!h) return;
+  Q.hintLv++;
+  const el = $('#qHint'); el.style.display = 'block';
+  const first = h.native.split(/\s+/).map(w => w.replace(/[A-Za-z][A-Za-z']*/g, m => m[0] + m.slice(1).replace(/[A-Za-z]/g, '_'))).join(' ');
+  el.innerHTML = Q.hintLv === 1 ? `💡 ${esc(first)}` : `💡 ${esc(first)}<br>🔑 ${h.phrases.map(p => esc(p.en)).join('、') || '（沒有關鍵片語）'}`;
+};
+$('#qMic').onclick = async () => {
+  const r = await recordEnglish($('#qMic'), $('#qMicHint'));
+  if (r && r.text) { $('#qText').value = r.text; $('#qMicHint').textContent = '辨識有錯可以直接改，再按「✅ 送出」'; }
+};
+$('#qShow').onclick = () => revealQ(null);
+$('#qCheck').onclick = async () => {
+  const h = Q.list[Q.i], ans = $('#qText').value.trim();
+  if (!ans) { toast('先用說的或打出你的英文'); return; }
+  Q.ans = ans;
+  if (!hasKey() || !navigator.onLine) { revealQ(localJudge(h, ans)); return; }
+  $('#qCheck').disabled = true; $('#qCheck').innerHTML = '<span class="spin"></span>批改中';
+  try {
+    const sc = settings.script;
+    const prompt = `A Chinese learner is practicing spoken English (${settings.accent === 'UK' ? 'British' : 'American'}), situation: ${TONE_DESC[h.tone] || TONE_DESC.friend}.
+Meaning they should express (Chinese): "${h.understood || h.zh}"
+Reference natural answer: "${h.native}"
+Other acceptable answers: ${JSON.stringify(h.alternatives.map(a => a.en))}
+Learner's answer (may come from speech recognition — ignore capitalization, punctuation and tiny recognition glitches): "${ans}"
+Judge if the learner's answer expresses the same meaning in natural spoken English. Different wording is totally fine if it is natural.
+Return JSON only: {"score": 0-100, "grade": "good" | "close" | "wrong", "feedback": "一兩句${sc}：先說做得好的地方，再說要改哪裡", "fixed": "the learner's own sentence minimally corrected to sound natural (same as theirs if already good)"}
+good = natural and correct meaning (score >= 80); close = understandable but unnatural, grammar issues or missing a small part; wrong = meaning wrong or mostly missing.`;
+    const j = await aiJSON(prompt);
+    revealQ({ score: Math.max(0, Math.min(100, +j.score || 0)), grade: j.grade || (j.score >= 80 ? 'good' : j.score >= 50 ? 'close' : 'wrong'), feedback: j.feedback || '', fixed: j.fixed || '' });
+  } catch (e) { const lj = localJudge(h, ans); lj.feedback = `（AI 批改失敗，改用字詞比對）${lj.feedback}`; revealQ(lj); }
+  finally { $('#qCheck').disabled = false; $('#qCheck').textContent = '✅ 送出'; }
+};
+function localJudge(h, ans) {
+  const best = Math.max(...[h.native, ...h.alternatives.map(a => a.en)].map(t => { const d = wordDiff(t, ans); const extra = Math.max(0, wordsOf(ans).length - wordsOf(t).length); return d.acc - extra * 5; }));
+  const score = Math.max(0, best);
+  return { score, grade: score >= 80 ? 'good' : score >= 50 ? 'close' : 'wrong', feedback: `和參考答案的字詞相似度 ${score}%（離線比對，不同說法也可能是對的，請自己判斷）`, fixed: '' };
+}
+function revealQ(j) {
+  const h = Q.list[Q.i];
+  const verdict = j ? { good: '😎 很道地！', close: '🤔 意思有到，可以更自然', wrong: '😣 再加油' }[j.grade] || '' : '';
+  const alts = h.alternatives.map(a => `<div class="row2"><span class="lab">${esc(a.label || '其他說法')}</span>${esc(a.en)} <button class="say" data-say="${esc(a.en)}">🔊</button></div>`).join('');
+  $('#qFb').innerHTML = `
+    ${j ? `<div class="row2"><span class="lab">你說的</span>${esc(Q.ans)}</div>
+    <div class="row2"><b>${verdict}</b> <span class="score ${scoreCls(j.score)}">${j.score} 分</span></div>
+    ${j.feedback ? `<div class="row2" style="font-size:14px">${esc(j.feedback)}</div>` : ''}
+    ${j.fixed && j.fixed.trim().toLowerCase() !== Q.ans.trim().toLowerCase() ? `<div class="row2"><span class="lab">✏️ 修正你的句子</span><b>${esc(j.fixed)}</b> <button class="say" data-say="${esc(j.fixed)}">🔊</button></div>` : ''}` : ''}
+    <div class="row2"><span class="lab">⭐ 道地說法</span><b style="color:#0f2d5c">${esc(h.native)}</b> <button class="say" data-say="${esc(h.native)}">🔊</button></div>
+    ${alts}
+    <div class="tools" style="margin-top:8px"><button class="tool" data-shadow="${h.id}">🎙️ 跟讀這句</button></div>`;
+  $('#qFb').style.display = 'block'; $('#qBtns').style.display = 'none'; $('#qRate').style.display = 'flex';
+  const rec = j ? { good: 2, close: 1, wrong: 0 }[j.grade] : null;
+  $('#qRate').querySelectorAll('button').forEach(b => b.classList.toggle('rec', rec !== null && +b.dataset.g === rec));
+  speak(h.native);
+}
+$('#qRate').onclick = e => {
+  const b = e.target.closest('button[data-g]'); if (!b) return;
+  const g = +b.dataset.g, h = Q.list[Q.i];
+  grade(h, g); Q.res.push({ id: h.id, g });
+  if (g === 0 && !Q.tries[h.id]) { Q.tries[h.id] = 1; Q.list.push(h); }   // 忘了：這一輪最後再考一次
+  Q.i++; stopSingle(); showQ(); renderStats(); renderHistory();
+  if (current && current.id === h.id) renderResult(h);
+};
+function showSummary() {
+  $('#qBody').style.display = 'none';
+  $('#qProg').style.width = '100%'; $('#qCount').textContent = '';
+  const last = {}; Q.res.forEach(r => last[r.id] = r.g);
+  const ids = Object.keys(last), c = [0, 0, 0]; ids.forEach(id => c[last[id]]++);
+  const weak = ids.filter(id => last[id] < 2).map(id => hist.find(h => h.id === id)).filter(Boolean);
+  const div = document.createElement('div'); div.id = 'qSum'; div.className = 'q-sum';
+  div.innerHTML = `<div class="big">${c[2] === ids.length ? '🏆' : '💪'}</div>
+    <h2>練習完成！</h2>
+    <p>😎 會了 <b>${c[2]}</b>　🤔 差一點 <b>${c[1]}</b>　😣 忘了 <b>${c[0]}</b></p>
+    <p style="font-size:13px;color:var(--sub)">系統已經依照結果安排下次複習的日子。<br>🔥 連續學習 ${streak()} 天，明天繼續！</p>
+    <div class="actions" style="margin-top:16px">${weak.length ? '<button class="btn ghost" id="qAgain">🔁 再練不熟的</button>' : ''}<button class="btn pri" id="qDone">完成</button></div>`;
+  $('#quizModal .sheet').appendChild(div);
+  $('#qDone').onclick = closeQuiz;
+  if (weak.length) $('#qAgain').onclick = () => startQuiz(weak, '🔁 再練不熟的');
+}
+function closeQuiz() { if (enRec) enRec.stop(); stopSingle(); $('#quizModal').classList.remove('show'); renderStats(); renderHistory(); }
+$('#qClose').onclick = closeQuiz;
+
+// ---- 跟讀練習 ----
+const SH = { h: null, list: [], idx: 0, url: null, audio: null };
+function openShadow(h) {
+  stopAllAudio();
+  SH.h = h;
+  SH.list = [{ l: '主句', t: h.native }, ...h.alternatives.map(a => ({ l: a.label || '其他說法', t: a.en })), ...(h.mine || []).map(m => ({ l: '我的造句', t: m.en }))];
+  SH.idx = 0; setShadowSentence(0);
+  $('#shadowModal').classList.add('show');
+}
+function setShadowSentence(i) {
+  SH.idx = i;
+  if (SH.url) { URL.revokeObjectURL(SH.url); SH.url = null; }
+  $('#shChips').innerHTML = SH.list.length > 1 ? SH.list.map((x, k) => `<button data-k="${k}" class="${k === i ? 'on' : ''}">${esc(x.l)}</button>`).join('') : '';
+  $('#shText').textContent = SH.list[i].t;
+  $('#shMine').disabled = true; $('#shResult').innerHTML = '';
+  $('#shHint').textContent = '先按 🔊 聽原音，再按 🎤 跟著說（說完會自動停止）'; $('#shHint').classList.remove('err');
+}
+$('#shChips').onclick = e => { const b = e.target.closest('button[data-k]'); if (b) setShadowSentence(+b.dataset.k); };
+$('#shListen').onclick = () => speak(SH.list[SH.idx].t);
+$('#shSlow').onclick = () => speak(SH.list[SH.idx].t, true);
+$('#shMine').onclick = () => { if (!SH.url) return; stopSingle(); if (!SH.audio) SH.audio = new Audio(); SH.audio.src = SH.url; SH.audio.play().catch(() => {}); };
+$('#shMic').onclick = async () => {
+  const r = await recordEnglish($('#shMic'), $('#shHint'), { keepAudio: true });
+  if (!r) return;
+  const target = SH.list[SH.idx].t;
+  if (r.blob) { if (SH.url) URL.revokeObjectURL(SH.url); SH.url = URL.createObjectURL(r.blob); $('#shMine').disabled = false; }
+  if (r.text) {
+    const d = wordDiff(target, r.text);
+    $('#shText').innerHTML = markWords(target, d.ok);
+    const h = SH.h; h.shadow = { n: ((h.shadow && h.shadow.n) || 0) + 1, best: Math.max((h.shadow && h.shadow.best) || 0, d.acc) };
+    bump('shadow'); saveHist(); renderHistory(); renderStats();
+    $('#shResult').innerHTML = `<div><span class="score ${scoreCls(d.acc)}">清楚度 ${d.acc}%</span></div>
+      <div style="font-size:12px;color:var(--sub);margin-top:6px">綠色＝有被聽清楚的字，紅色＝沒聽清楚的字（依語音辨識推估，僅供參考）<br>系統聽到：${esc(r.text)}</div>
+      ${r.blob ? '<div style="font-size:12px;color:var(--sub);margin-top:4px">👉 按「🔊 聽原音」和「▶ 聽我的錄音」對照聽，模仿語調和連音</div>' : ''}`;
+  } else if (r.blob) $('#shResult').innerHTML = '<div style="font-size:13px;color:var(--sub)">錄好了！按「▶ 聽我的錄音」和原音對照聽聽看</div>';
+};
+
+// ---- 換字造句 ----
+const MK = { h: null, i: 0 };
+function openMake(h, i) {
+  MK.h = h; MK.i = i;
+  $('#mkPhrase').textContent = h.phrases[i].en; $('#mkZh').textContent = h.phrases[i].zh;
+  $('#mkText').value = ''; $('#mkResult').innerHTML = ''; $('#mkHint').textContent = '';
+  $('#makeModal').classList.add('show');
+}
+$('#mkMic').onclick = async () => { const r = await recordEnglish($('#mkMic'), $('#mkHint')); if (r && r.text) $('#mkText').value = r.text; };
+$('#mkCheck').onclick = async () => {
+  const h = MK.h, p = h.phrases[MK.i], text = $('#mkText').value.trim();
+  if (!text) { toast('先說或打一句你的造句'); return; }
+  if (!hasKey()) { openKeys(); return; }
+  const btn = $('#mkCheck'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>檢查中';
+  try {
+    const sc = settings.script;
+    const j = await aiJSON(`A Chinese learner is practicing the English expression "${p.en}" (meaning: ${p.zh}). They made their own sentence (maybe via speech recognition, ignore capitalization/punctuation): "${text}"
+Check whether they used the expression correctly and naturally in spoken ${settings.accent === 'UK' ? 'British' : 'American'} English.
+Return JSON only: {"score": 0-100, "feedback": "一兩句${sc}：用法對不對、哪裡可以更自然", "fixed": "their sentence corrected to sound natural (keep their idea and wording where possible)", "idea": "one more natural example using the expression in a different everyday situation"}`);
+    const fixed = (j.fixed || text).trim();
+    h.mine = h.mine || [];
+    if (!h.mine.some(m => m.en.toLowerCase() === fixed.toLowerCase())) h.mine.push({ en: fixed, raw: text, phrase: p.en, ts: Date.now() });
+    bump('made'); saveHist(); renderHistory(); renderStats();
+    if (current && current.id === h.id) renderResult(h);
+    const s = Math.max(0, Math.min(100, +j.score || 0));
+    $('#mkResult').innerHTML = `<div class="attempt" style="margin-top:10px">
+      <div><span class="score ${scoreCls(s)}">${s} 分</span> ${esc(j.feedback || '')}</div>
+      <div class="fixline">✏️ ${esc(fixed)} <button class="say" data-say="${esc(fixed)}">🔊</button></div>
+      ${j.idea ? `<div style="margin-top:6px">💡 再一個例子：${esc(j.idea)} <button class="say" data-say="${esc(j.idea)}">🔊</button></div>` : ''}
+      <div style="font-size:12px;color:var(--sub);margin-top:6px">已存到「✍️ 我的造句」，連續播放選「再加道地用語」時也會播放。</div></div>`;
+    $('#mkText').value = '';
+  } catch (e) { toast('檢查失敗：' + e.message, 3500); }
+  finally { btn.disabled = false; btn.textContent = '✅ 請 AI 檢查'; }
+};
+
+// ---- 存到英語學習筆記本（同一個網站時會直接出現在筆記本裡）----
+function saveToNotebook(h) {
+  const KEY = 'english_notebook_v1.8', TOPIC = '🗣️ 口說轉譯器';
+  let tasks = null;
+  try { tasks = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+  if (!Array.isArray(tasks)) {
+    if (!confirm('在這個網址找不到「英語學習筆記本」的資料。\n\n口說轉譯器要和筆記本放在同一個網站（chahan1.github.io）才能互通。\n仍要建立嗎？')) return;
+    tasks = [];
+  }
+  let id = Date.now(); const nid = () => ++id;
+  let topic = tasks.find(t => t && t.text === TOPIC);
+  if (!topic) { topic = { id: nid(), text: TOPIC, checked: false, collapsed: false, createdAt: Date.now(), subtasks: [] }; tasks.unshift(topic); }
+  topic.subtasks = topic.subtasks || [];
+  const zh = h.understood || h.zh, example = `${h.native} (${zh})`;
+  const short = s => { const t = String(s || '').split(/[，,。；;（(]/)[0].trim(); return t.length > 14 ? t.slice(0, 14) + '…' : t; };
+  const items = h.phrases.length ? h.phrases : [{ en: h.native, zh }];
+  let words = 0, exs = 0;
+  items.forEach(p => {
+    const key = p.en.trim().toLowerCase();
+    let sub = topic.subtasks.find(s => String(s.text || '').toLowerCase().startsWith(key));
+    if (!sub) { sub = { id: nid(), text: `${p.en} ${short(p.zh)}`, definition: p.zh, checked: false, collapsed: false, showDef: false, createdAt: Date.now(), grandtasks: [] }; topic.subtasks.unshift(sub); words++; }
+    sub.grandtasks = sub.grandtasks || [];
+    if (!sub.grandtasks.some(g => String(g.text || '').includes(h.native))) { sub.grandtasks.unshift({ id: nid(), text: example, checked: false, createdAt: Date.now() }); exs++; }
+  });
+  try { localStorage.setItem(KEY, JSON.stringify(tasks)); } catch (e) { toast('儲存失敗：' + e.message); return; }
+  h.savedNb = true; saveHist();
+  if (current && current.id === h.id) renderResult(h);
+  toast(words || exs ? `📖 已存到筆記本「${TOPIC}」：新增 ${words} 個片語、${exs} 句例句` : '這些片語和例句已經在筆記本裡了', 3000);
+}
+
 // ================= 啟動 =================
-renderHistory(); updateBanners(); updateModeTag(); updateSpeed();
+renderHistory(); updateBanners(); updateModeTag(); updateSpeed(); renderStats();
+if (settings.tryFirst) setTry(true);
 zhInput.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) doTranslate(); });
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});
 </script>
