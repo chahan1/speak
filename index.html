@@ -325,7 +325,7 @@
 </head>
 <body>
 <header>
-  <div class="brand"><img src="icon-192.png" alt=""><h1>道地口說轉譯器<span class="ver">v1.4</span></h1></div>
+  <div class="brand"><img src="icon-192.png" alt=""><h1>道地口說轉譯器<span class="ver">v1.5</span></h1></div>
   <button class="icon-btn" data-act="settings" aria-label="設定"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   <button class="icon-btn" id="menuBtn" aria-label="選單">⋮</button>
 </header>
@@ -436,20 +436,24 @@
 <div class="modal" id="keysModal">
   <div class="sheet">
     <h2>🔑 AI 金鑰設定</h2>
-    <p class="note">至少填一組。會依 Groq → Free.ai → Gemini 的順序使用，一家失敗就換下一家。<br>若這個 App 和「英語學習筆記本」放在同一個網站（chahan1.github.io），金鑰會自動共用。</p>
+    <p class="note"><b>Gemini 是主要服務</b>（付費，品質最好，資料不會被拿去訓練）；Groq 和 Free.ai 是<b>免費備用</b>。轉譯、審稿、語音辨識、AI 語音都會先用 Gemini，失敗或額度用完時自動改用備用服務。<br>和「英語學習筆記本」放在同一個網站（chahan1.github.io）時，金鑰會自動共用。</p>
+    <div class="ks" data-p="gemini">
+      <div class="ks-head"><b>Gemini</b><span class="t">主要・付費</span><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">申請 ›</a></div>
+      <div class="ks-in"><input type="password" placeholder="AIza..." autocomplete="off"><button class="btn sm ghost" data-test>測試</button></div>
+      <div class="ks-msg"></div>
+      <div class="set-row" style="border:none;padding:8px 0 0">Gemini 模型
+        <select id="ksTier"><option value="standard">標準（Flash，品質最好）</option><option value="economy">省錢（Flash-Lite，費用約 1/3）</option></select>
+        <small>2027 年 1 月起 Flash 的價格會加倍，費用太高可改成「省錢」。這個設定和英語學習筆記本共用。</small>
+      </div>
+    </div>
     <div class="ks" data-p="groq">
-      <div class="ks-head"><b>Groq</b><span class="t">首選・免費・速度最快</span><a href="https://console.groq.com/keys" target="_blank" rel="noopener">申請 ›</a></div>
+      <div class="ks-head"><b>Groq</b><span class="t">備用・免費・語音辨識</span><a href="https://console.groq.com/keys" target="_blank" rel="noopener">申請 ›</a></div>
       <div class="ks-in"><input type="password" placeholder="gsk_..." autocomplete="off"><button class="btn sm ghost" data-test>測試</button></div>
       <div class="ks-msg"></div>
     </div>
     <div class="ks" data-p="freeai">
-      <div class="ks-head"><b>Free.ai</b><span class="t">免費・備用</span><a href="https://free.ai" target="_blank" rel="noopener">申請 ›</a></div>
+      <div class="ks-head"><b>Free.ai</b><span class="t">備用・免費・AI 語音</span><a href="https://free.ai" target="_blank" rel="noopener">申請 ›</a></div>
       <div class="ks-in"><input type="password" placeholder="Free.ai API key" autocomplete="off"><button class="btn sm ghost" data-test>測試</button></div>
-      <div class="ks-msg"></div>
-    </div>
-    <div class="ks" data-p="gemini">
-      <div class="ks-head"><b>Gemini</b><span class="t">備用・學校帳號可能不能用</span><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">申請 ›</a></div>
-      <div class="ks-in"><input type="password" placeholder="AIza..." autocomplete="off"><button class="btn sm ghost" data-test>測試</button></div>
       <div class="ks-msg"></div>
     </div>
     <div class="actions"><button class="btn ghost" data-close>取消</button><button class="btn pri" id="saveKeys">儲存</button></div>
@@ -468,11 +472,11 @@
     <div class="set-h">🎤 語音輸入</div>
     <div class="set-row">辨識方式
       <select id="setStt">
-        <option value="auto">自動（有 Groq 金鑰就用 Whisper）</option>
-        <option value="whisper">Whisper 錄音辨識（推薦）</option>
+        <option value="auto">自動（有金鑰就用錄音辨識）</option>
+        <option value="whisper">錄音辨識：Gemini → Whisper（推薦）</option>
         <option value="chrome">Chrome 即時辨識</option>
       </select>
-      <small>Whisper：先錄音、說完再辨識，不會中途斷掉也不會重複，準確度較高（用 Groq 金鑰，免費）。Chrome：邊說邊出字，但 Android 上容易中斷。</small>
+      <small>錄音辨識：先錄音、說完再辨識，不會中途斷掉也不會重複，準確度較高（先用 Gemini，失敗時改用 Groq Whisper）。Chrome：邊說邊出字，但 Android 上容易中斷。</small>
     </div>
     <div class="set-row">說完自動停止
       <select id="setSilence">
@@ -510,7 +514,7 @@
     <div class="set-h">🔊 朗讀聲音</div>
     <div class="set-row">語音
       <select id="setTts">
-        <option value="auto">自動（優先用免費 AI 語音）</option>
+        <option value="auto">自動（優先用 Gemini 語音，Free.ai 備用）</option>
         <option value="freeai">免費 AI 語音（Free.ai）</option>
         <option value="gemini">Gemini 語音（可能收費）</option>
         <option value="phone">手機語音（離線可用）</option>
@@ -624,7 +628,7 @@
 
 <script>
 'use strict';
-const VERSION = '1.4';
+const VERSION = '1.5';
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // 線條圖示
@@ -669,12 +673,18 @@ const TONE_NAME = { friend: '朋友閒聊', work: '同事日常', polite: '禮�
 // ================= AI（與英語學習筆記本共用金鑰名稱）=================
 const KEY_STORE = { gemini: 'user_gemini_api_key', groq: 'user_groq_api_key', freeai: 'user_freeai_api_key' };
 const PROVIDER_NAME = { groq: 'Groq', freeai: 'Free.ai', gemini: 'Gemini' };
-// 依翻譯品質排序：Groq（gpt-oss-120b）→ Gemini → Free.ai（7B 小模型，品質最弱，放最後）
-const TEXT_ORDER = ['groq', 'gemini', 'freeai'];
+// v1.5：Gemini 為主要（付費）服務，Groq 與 Free.ai 為免費備用
+const TEXT_ORDER = ['gemini', 'groq', 'freeai'];
 const getKey = p => (localStorage.getItem(KEY_STORE[p]) || '').trim();
 const hasKey = () => TEXT_ORDER.some(p => getKey(p));
 const GROQ_MODELS = ['openai/gpt-oss-120b', 'llama-3.3-70b-versatile'];
-const GEMINI_MODELS = ['gemini-flash-latest', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.1-flash-lite'];
+// Gemini 模型分「標準」與「省錢」兩組；設定存在 ai_gemini_tier，和英語學習筆記本共用
+const GEMINI_TIERS = {
+  standard: ['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-flash-latest', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite'],
+  economy: ['gemini-3.1-flash-lite', 'gemini-3.5-flash-lite', 'gemini-3.8-flash']
+};
+const geminiTier = () => localStorage.getItem('ai_gemini_tier') === 'economy' ? 'economy' : 'standard';
+const geminiModels = () => GEMINI_TIERS[geminiTier()];
 const FREEAI_BASE = 'https://api.free.ai';
 const FREEAI_CHAT_MODELS = ['qwen7b'];
 const SYS_PROMPT = 'You are an expert bilingual speaking coach (Mandarin Chinese and natural spoken English). Reply with JSON only, no extra text.';
@@ -733,7 +743,7 @@ async function chatFreeAI(prompt, key = getKey('freeai'), opts = {}) {
 async function chatGemini(prompt, key = getKey('gemini'), opts = {}) {
   const temperature = opts.temperature ?? 0.5;
   let last = null;
-  for (const model of GEMINI_MODELS) {
+  for (const model of geminiModels()) {
     try {
       const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
@@ -742,7 +752,7 @@ async function chatGemini(prompt, key = getKey('gemini'), opts = {}) {
       if (!res.ok) { let msg = `HTTP ${res.status}`; try { msg = (await res.json()).error?.message || msg; } catch (e) {} const er = new Error(msg); er.status = res.status; throw er; }
       const data = await res.json();
       return extractJSON(data?.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '');
-    } catch (e) { last = e; const k = classifyError(e); if (k === 'key' || k === 'offline' || k === 'quota') break; }
+    } catch (e) { last = e; const k = classifyError(e); if (k === 'key' || k === 'offline') break; }
   }
   throw last;
 }
@@ -904,7 +914,7 @@ const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 const micBtn = $('#micBtn'), micHint = $('#micHint'), zhInput = $('#zhInput'), interimEl = $('#interim');
 let recording = false, sttBusy = false, curMode = null;
 function hint(msg, err) { micHint.textContent = msg; micHint.classList.toggle('err', !!err); }
-const canWhisper = () => !!(getKey('groq') || getKey('freeai')) && !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+const canWhisper = () => !!(getKey('gemini') || getKey('groq') || getKey('freeai')) && !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
 function sttMode() {
   if (settings.stt === 'chrome') return SR ? 'chrome' : (canWhisper() ? 'whisper' : null);
   if (settings.stt === 'whisper') return canWhisper() ? 'whisper' : (SR ? 'chrome' : null);
@@ -913,8 +923,8 @@ function sttMode() {
 function updateModeTag() {
   const m = sttMode();
   const sil = +settings.silence ? `停頓 ${settings.silence} 秒自動結束` : '再按一下結束';
-  $('#modeTag').textContent = m === 'whisper' ? `Whisper 錄音辨識・${sil}` : m === 'chrome' ? `Chrome 即時辨識・${sil}` : '不支援語音輸入，請直接打字';
-  if (settings.stt === 'whisper' && m !== 'whisper') $('#modeTag').textContent += '（Whisper 需要 Groq 金鑰）';
+  $('#modeTag').textContent = m === 'whisper' ? `錄音辨識（${getKey('gemini') ? 'Gemini' : 'Whisper'}）・${sil}` : m === 'chrome' ? `Chrome 即時辨識・${sil}` : '不支援語音輸入，請直接打字';
+  if (settings.stt === 'whisper' && m !== 'whisper') $('#modeTag').textContent += '（錄音辨識需要 Gemini 或 Groq 金鑰）';
 }
 const fmtSec = ms => { const s = Math.floor(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
 function joinZh(a, b) { a = (a || '').trim(); b = (b || '').trim(); if (!a) return b; if (!b) return a; return a + (/[，。！？、,.!?；;：:]$/.test(a) ? '' : '，') + b; }
@@ -1018,10 +1028,45 @@ function cleanTranscript(t) {
 }
 const whisperLang = () => settings.lang.startsWith('yue') ? 'yue' : 'zh';
 const whisperPrompt = () => settings.lang.startsWith('yue') ? '以下係廣東話口語。' : settings.script === '简体中文' || settings.lang.includes('Hans') ? '以下是普通话的口语句子，请加上标点。' : '以下是台灣華語的口語句子，請使用繁體中文並加上標點。';
+// Gemini 語音辨識：錄音先轉成 16kHz WAV（Gemini 不接受 webm），用最便宜的 Flash-Lite 逐字聽寫
+const GEMINI_STT_MODELS = ['gemini-3.1-flash-lite', 'gemini-3.5-flash-lite', 'gemini-3.8-flash'];
+function bytesToB64(u8) { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); }
+async function blobToWavB64(blob) {
+  const clip = await decodeToClip(await blob.arrayBuffer());
+  const pcm = resamplePCM(clip.pcm, clip.rate, 16000);
+  const wav = new Uint8Array(44 + pcm.byteLength);
+  wav.set(new Uint8Array(wavHeader(16000, pcm.byteLength)), 0); wav.set(new Uint8Array(pcm), 44);
+  return bytesToB64(wav);
+}
+async function geminiTranscribe(blob, en) {
+  const key = getKey('gemini'), audio = await blobToWavB64(blob);
+  const how = en ? 'The speaker is speaking English. Write exactly the English words you hear.'
+    : settings.lang.startsWith('yue') ? '說話的人講粵語，請用繁體中文寫出聽到的內容。'
+    : settings.script === '简体中文' || settings.lang.includes('Hans') ? '說話的人講普通話，請用简体中文寫出聽到的內容。' : '說話的人講台灣華語，請用繁體中文寫出聽到的內容。';
+  const prompt = `Transcribe this recording verbatim. ${how} Do not translate, summarize, answer or correct grammar. Keep filler words only if clearly spoken. Add natural punctuation. If there is no speech, return an empty string.
+Return JSON only: {"text": "..."}`;
+  let last = null;
+  for (const model of GEMINI_STT_MODELS) {
+    try {
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+        body: JSON.stringify({ contents: [{ parts: [{ inline_data: { mime_type: 'audio/wav', data: audio } }, { text: prompt }] }], generationConfig: { responseMimeType: 'application/json', temperature: 0 } })
+      });
+      if (!r.ok) { let m = 'HTTP ' + r.status; try { m = (await r.json()).error.message || m; } catch (e) {} const er = new Error(m); er.status = r.status; throw er; }
+      const j = await r.json();
+      return String(extractJSON((j?.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('')).text || '');
+    } catch (e) { last = e; const k = classifyError(e); if (k === 'key' || k === 'offline') break; }
+  }
+  throw last;
+}
 async function transcribe(blob, mime, lang) {
   const en = lang === 'en';
   const ext = mime.includes('mp4') ? 'm4a' : mime.includes('ogg') ? 'ogg' : 'webm';
   const errs = [];
+  if (getKey('gemini')) {
+    try { const t = cleanTranscript(await geminiTranscribe(blob, en)); if (t) return t; errs.push('Gemini：沒有聽到內容'); }
+    catch (e) { errs.push('Gemini：' + e.message); if (classifyError(e) === 'offline' && !navigator.onLine) throw new Error(errs.join('；')); }
+  }
   if (getKey('groq')) {
     for (const model of ['whisper-large-v3', 'whisper-large-v3-turbo']) {
       try {
@@ -1295,7 +1340,7 @@ function ttsEngine() {
   if (e === 'phone') return 'phone';
   if (e === 'freeai') return getKey('freeai') ? 'freeai' : 'phone';
   if (e === 'gemini') return getKey('gemini') ? 'gemini' : 'phone';
-  return getKey('freeai') ? 'freeai' : getKey('gemini') ? 'gemini' : 'phone';
+  return getKey('gemini') ? 'gemini' : getKey('freeai') ? 'freeai' : 'phone';
 }
 const voiceSpec = () => { const e = ttsEngine(); return e === 'freeai' ? { provider: 'freeai', voice: settings.fvoice } : e === 'gemini' ? { provider: 'gemini', voice: settings.gvoice } : null; };
 const voiceLabel = () => { const e = ttsEngine(), list = e === 'freeai' ? FREE_VOICES : e === 'gemini' ? GEMINI_VOICES : null; const v = list && list.find(x => x[0] === (e === 'freeai' ? settings.fvoice : settings.gvoice)); return ENGINE_NAME[e] + (v ? '・' + v[1] : ''); };
@@ -1374,7 +1419,8 @@ async function postGoogle(url, key, body) {
 async function fetchGeminiTTS(text, voice) {
   const key = getKey('gemini');
   if (!key) { const e = new Error('尚未設定 Gemini 金鑰'); e.status = 401; throw e; }
-  const tries = [...TTS_IX_MODELS.map(m => 'ix:' + m), ...TTS_GC_MODELS.map(m => 'gc:' + m)];
+  const ix = geminiTier() === 'economy' ? TTS_IX_MODELS : ['gemini-3.8-flash-tts', ...TTS_IX_MODELS.filter(m => m !== 'gemini-3.8-flash-tts')];
+  const tries = [...ix.map(m => 'ix:' + m), ...TTS_GC_MODELS.map(m => 'gc:' + m)];
   const pref = localStorage.getItem('eng_ttsModel');
   if (pref && tries.includes(pref)) { tries.splice(tries.indexOf(pref), 1); tries.unshift(pref); }
   let last = null;
@@ -1407,7 +1453,7 @@ async function fetchGeminiTTS(text, voice) {
   }
   throw last || new Error('AI 語音產生失敗');
 }
-async function getClip(text, spec) {
+async function getClipOnce(text, spec) {
   const key = specKey(spec, text);
   const cached = await ttsGet(key);
   if (cached) return cached;
@@ -1415,6 +1461,21 @@ async function getClip(text, spec) {
   const clip = spec.provider === 'freeai' ? await fetchFreeTTS(text, spec.voice) : await fetchGeminiTTS(text, spec.voice);
   await ttsPut(key, clip);
   return clip;
+}
+// v1.5：主要語音（Gemini）失敗時，自動改用另一家 AI 語音（Free.ai），盡量選相同性別的聲音
+const FEMALE_GEMINI = ['Kore', 'Aoede', 'Leda', 'Sulafat', 'Zephyr', 'Callirrhoe', 'Autonoe', 'Despina', 'Erinome', 'Laomedeia', 'Achernar', 'Gacrux', 'Pulcherrima', 'Vindemiatrix'];
+function backupSpec(spec) {
+  if (spec.provider === 'gemini' && getKey('freeai')) return { provider: 'freeai', voice: FEMALE_GEMINI.includes(spec.voice) ? (settings.accent === 'UK' ? 'bf_emma' : 'af_heart') : (settings.accent === 'UK' ? 'bm_george' : 'am_michael') };
+  if (spec.provider === 'freeai' && getKey('gemini')) return { provider: 'gemini', voice: /^(af|bf)_/.test(spec.voice) ? 'Kore' : 'Charon' };
+  return null;
+}
+async function getClip(text, spec) {
+  try { return await getClipOnce(text, spec); }
+  catch (e) {
+    const b = backupSpec(spec);
+    if (!b || !navigator.onLine) throw e;
+    return await getClipOnce(text, b);
+  }
 }
 function wavHeader(rate, dataBytes) {
   const b = new ArrayBuffer(44), v = new DataView(b);
@@ -1783,8 +1844,10 @@ document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', e =
 
 function openKeys() {
   document.querySelectorAll('#keysModal .ks').forEach(b => { b.querySelector('input').value = getKey(b.dataset.p); b.querySelector('.ks-msg').textContent = ''; });
+  $('#ksTier').value = geminiTier();
   $('#keysModal').classList.add('show');
 }
+$('#ksTier').onchange = e => { localStorage.setItem('ai_gemini_tier', e.target.value === 'economy' ? 'economy' : 'standard'); toast(e.target.value === 'economy' ? '已改用省錢模式（Gemini Flash-Lite）' : '已改用標準模式（Gemini Flash）'); };
 $('#saveKeys').onclick = () => {
   document.querySelectorAll('#keysModal .ks').forEach(b => { const v = b.querySelector('input').value.trim(); v ? localStorage.setItem(KEY_STORE[b.dataset.p], v) : localStorage.removeItem(KEY_STORE[b.dataset.p]); });
   $('#keysModal').classList.remove('show'); updateBanners(); updateModeTag(); toast('金鑰已儲存');
@@ -1821,7 +1884,7 @@ function openSettings() {
   $('#setSrs').value = settings.srsScope; $('#setGoal').value = String(settings.dailyGoal);
   $('#setModal').classList.add('show');
 }
-$('#setStt').onchange = e => { settings.stt = e.target.value; saveSet(); updateModeTag(); if (e.target.value === 'whisper' && !canWhisper()) toast('Whisper 需要 Groq（或 Free.ai）金鑰', 3000); };
+$('#setStt').onchange = e => { settings.stt = e.target.value; saveSet(); updateModeTag(); if (e.target.value === 'whisper' && !canWhisper()) toast('錄音辨識需要 Gemini、Groq 或 Free.ai 金鑰', 3000); };
 $('#setSilence').onchange = e => { settings.silence = +e.target.value; saveSet(); updateModeTag(); };
 $('#setLang').onchange = e => { settings.lang = e.target.value; saveSet(); };
 $('#setScript').onchange = e => { settings.script = e.target.value; saveSet(); };
