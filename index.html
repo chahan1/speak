@@ -140,6 +140,19 @@
   .en-main { font-family: var(--serif); font-size: 23px; line-height: 1.42; font-weight: 600; color: var(--en-ink); margin: 0 0 14px; position: relative; z-index: 1; letter-spacing: -.1px; }
   .bubble.en .copy { position: absolute; top: 8px; right: 8px; z-index: 2; color: var(--en-ink); opacity: .6; }
   .bubble.en .en-main { padding-right: 26px; }
+  .bubble.en .back { font-size: 13px; color: #5a4a1a; margin: -6px 0 12px; position: relative; z-index: 1; }
+  .qc { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding: 8px 10px 8px 12px; border-radius: 12px; background: #eef1f6; font-size: 12.5px; color: var(--sub); }
+  .qc.ok { background: var(--green2); color: var(--green); }
+  .qc.warn { background: var(--amber2); color: var(--amber); }
+  details.qc { display: block; background: #e8f0fb; color: #1d4f9a; }
+  details.qc summary { display: flex; align-items: center; gap: 8px; cursor: pointer; list-style: none; }
+  details.qc summary::-webkit-details-marker { display: none; }
+  details.qc ul { margin: 8px 0 2px; padding-left: 20px; color: var(--ink); font-size: 13px; }
+  details.qc li { margin: 3px 0; }
+  .qc-t { flex: 1; display: inline-flex; align-items: center; gap: 5px; }
+  .qc-t svg.i { width: 16px; height: 16px; }
+  .qc-btn { border: 1px solid currentColor; background: rgba(255,255,255,.6); color: inherit; border-radius: 14px; padding: 3px 10px; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; flex: none; }
+  .qc-btn svg.i { width: 14px; height: 14px; }
   .act4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; border-top: 1px solid rgba(16,38,74,.12); padding-top: 8px; position: relative; z-index: 1; }
   .act4 button { border: none; background: none; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0 2px; font-size: 12px; color: var(--en-ink); border-radius: 10px; cursor: pointer; }
   .act4 button:active { background: rgba(255,255,255,.5); }
@@ -312,7 +325,7 @@
 </head>
 <body>
 <header>
-  <div class="brand"><img src="icon-192.png" alt=""><h1>道地口說轉譯器<span class="ver">v1.3</span></h1></div>
+  <div class="brand"><img src="icon-192.png" alt=""><h1>道地口說轉譯器<span class="ver">v1.4</span></h1></div>
   <button class="icon-btn" data-act="settings" aria-label="設定"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   <button class="icon-btn" id="menuBtn" aria-label="選單">⋮</button>
 </header>
@@ -447,6 +460,11 @@
 <div class="modal" id="setModal">
   <div class="sheet">
     <h2>⚙️ 設定</h2>
+    <div class="set-h">✅ 轉譯品質</div>
+    <div class="set-row">翻譯後再請 AI 編輯檢查一次 <input type="checkbox" id="setQc">
+      <small>以「英文母語編輯＋口譯員」的標準檢查意思有沒有漏、用法是否道地、用語說明是否正確，有錯就自動修正。比較準確，但每句多用一次 AI 額度、多等幾秒。</small>
+    </div>
+
     <div class="set-h">🎤 語音輸入</div>
     <div class="set-row">辨識方式
       <select id="setStt">
@@ -606,7 +624,7 @@
 
 <script>
 'use strict';
-const VERSION = '1.3';
+const VERSION = '1.4';
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // 線條圖示
@@ -637,7 +655,7 @@ try { hist = JSON.parse(localStorage.getItem(HIST_KEY)) || []; } catch (e) { his
 const DEFAULTS = {
   tone: 'friend', accent: 'US', lang: 'zh-TW', script: '繁體中文', autoSpeak: false, autoGo: true,
   stt: 'auto', silence: 2.5,
-  srsScope: 'star', dailyGoal: 5,
+  srsScope: 'star', dailyGoal: 5, qualityCheck: true,
   tts: 'auto', voice: '', fvoice: 'af_heart', gvoice: 'Kore', rate: 1.0,
   play: { scope: 'all', content: 'alts', order: 'new', limit: 20, repeat: 2, gap: 2 }
 };
@@ -651,7 +669,8 @@ const TONE_NAME = { friend: '朋友閒聊', work: '同事日常', polite: '禮�
 // ================= AI（與英語學習筆記本共用金鑰名稱）=================
 const KEY_STORE = { gemini: 'user_gemini_api_key', groq: 'user_groq_api_key', freeai: 'user_freeai_api_key' };
 const PROVIDER_NAME = { groq: 'Groq', freeai: 'Free.ai', gemini: 'Gemini' };
-const TEXT_ORDER = ['groq', 'freeai', 'gemini'];
+// 依翻譯品質排序：Groq（gpt-oss-120b）→ Gemini → Free.ai（7B 小模型，品質最弱，放最後）
+const TEXT_ORDER = ['groq', 'gemini', 'freeai'];
 const getKey = p => (localStorage.getItem(KEY_STORE[p]) || '').trim();
 const hasKey = () => TEXT_ORDER.some(p => getKey(p));
 const GROQ_MODELS = ['openai/gpt-oss-120b', 'llama-3.3-70b-versatile'];
@@ -683,12 +702,13 @@ async function postBearer(url, key, body) {
 }
 const chatText = j => j?.choices?.[0]?.message?.content ?? j?.choices?.[0]?.text ?? j?.message?.content ?? j?.content ?? j?.response ?? j?.output ?? j?.result ?? '';
 
-async function chatGroq(prompt, key = getKey('groq')) {
+async function chatGroq(prompt, key = getKey('groq'), opts = {}) {
+  const temperature = opts.temperature ?? 0.5;
   let last = null;
   for (const model of GROQ_MODELS) {
     try {
       const res = await postBearer('https://api.groq.com/openai/v1/chat/completions', key, {
-        model, temperature: 0.6, response_format: { type: 'json_object' },
+        model, temperature, response_format: { type: 'json_object' },
         messages: [{ role: 'system', content: SYS_PROMPT }, { role: 'user', content: prompt }]
       });
       return extractJSON(chatText(await res.json()));
@@ -696,12 +716,13 @@ async function chatGroq(prompt, key = getKey('groq')) {
   }
   throw last;
 }
-async function chatFreeAI(prompt, key = getKey('freeai')) {
+async function chatFreeAI(prompt, key = getKey('freeai'), opts = {}) {
+  const temperature = opts.temperature ?? 0.5;
   let last = null;
   for (const path of ['/v1/chat/completions', '/v1/chat/']) {
     for (const model of FREEAI_CHAT_MODELS) {
       try {
-        const res = await postBearer(FREEAI_BASE + path, key, { model, temperature: 0.6, messages: [{ role: 'system', content: SYS_PROMPT }, { role: 'user', content: prompt }] });
+        const res = await postBearer(FREEAI_BASE + path, key, { model, temperature, messages: [{ role: 'system', content: SYS_PROMPT }, { role: 'user', content: prompt }] });
         const ct = res.headers.get('content-type') || '';
         return extractJSON(ct.includes('json') ? chatText(await res.json()) : await res.text());
       } catch (e) { last = e; const k = classifyError(e); if (k === 'key' || k === 'offline') throw e; }
@@ -709,13 +730,14 @@ async function chatFreeAI(prompt, key = getKey('freeai')) {
   }
   throw last;
 }
-async function chatGemini(prompt, key = getKey('gemini')) {
+async function chatGemini(prompt, key = getKey('gemini'), opts = {}) {
+  const temperature = opts.temperature ?? 0.5;
   let last = null;
   for (const model of GEMINI_MODELS) {
     try {
       const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-        body: JSON.stringify({ systemInstruction: { parts: [{ text: SYS_PROMPT }] }, contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: 'application/json', temperature: 0.6 } })
+        body: JSON.stringify({ systemInstruction: { parts: [{ text: SYS_PROMPT }] }, contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: 'application/json', temperature } })
       });
       if (!res.ok) { let msg = `HTTP ${res.status}`; try { msg = (await res.json()).error?.message || msg; } catch (e) {} const er = new Error(msg); er.status = res.status; throw er; }
       const data = await res.json();
@@ -726,13 +748,13 @@ async function chatGemini(prompt, key = getKey('gemini')) {
 }
 const CHAT = { groq: chatGroq, freeai: chatFreeAI, gemini: chatGemini };
 
-async function aiJSON(prompt) {
+async function aiJSON(prompt, opts = {}) {
   const order = TEXT_ORDER.filter(p => getKey(p));
   if (!order.length) { const e = new Error('尚未設定任何 AI 金鑰'); e.kind = 'key'; throw e; }
   if (!navigator.onLine) { const e = new Error('目前沒有網路'); e.kind = 'offline'; throw e; }
   const errs = [];
   for (const p of order) {
-    try { const r = await CHAT[p](prompt); r._provider = p; return r; }
+    try { const r = await CHAT[p](prompt, undefined, opts); if (!r || typeof r !== 'object' || Array.isArray(r)) throw new Error('AI 回傳的格式不正確'); r._provider = p; return r; }
     catch (e) {
       if (e instanceof TypeError && navigator.onLine) e.message = '無法連線（網路不穩，或此服務不允許網頁直接連線）';
       e.provider = p; errs.push(e);
@@ -759,33 +781,31 @@ Chinese speech:
 """${zh}"""
 
 Your job:
-1. Work out what they actually MEAN (fix obvious recognition errors from context).
+1. Work out exactly what they MEAN (fix obvious recognition errors from context; if a word is ambiguous, choose the most likely everyday meaning).
 2. Say it the way a native ${accent} English speaker would naturally SAY it out loud in ${TONE_DESC[settings.tone]}.
 
-Rules:
-- Translate the meaning and intent, never word by word. No Chinglish, no textbook or written style.
-- Sound like real speech: contractions, phrasal verbs, everyday chunks (e.g. "I'm swamped", "no worries", "sounds good", "I'm down"), short speakable sentences.
-- Use idioms or slang only if a native speaker would genuinely use them in this situation.
-- Keep the speaker's attitude and feeling (complaining, excited, joking, hesitant, apologetic...).
-- Drop Chinese fillers; don't invent facts that aren't in the original.
-- Use ${accent} vocabulary and spelling.${extra ? '\n- EXTRA INSTRUCTION: ' + extra : ''}
+Accuracy rules (most important):
+- Keep the FULL meaning: every fact, time, number, person and request in the Chinese must appear; add nothing that is not there.
+- Keep the same attitude and politeness (complaining, excited, joking, hesitant, apologetic, a request vs. a statement).
+- Do not guess at names or facts you cannot hear; keep them general.
 
-Return JSON only, in exactly this shape (all explanations in ${sc}):
-{
-  "understood": "整理後的中文原意（${sc}，修正辨識錯字、去掉贅字）",
-  "native": "the single best natural spoken English version",
-  "alternatives": [
-    {"label": "更隨性", "en": "a more casual / slangy way to say it"},
-    {"label": "比較客氣", "en": "a slightly more polite way to say it"}
-  ],
-  "phrases": [
-    {"en": "a key native expression used above", "zh": "意思與使用時機（${sc}，一句話）"}
-  ],
-  "avoid": [
-    {"chinglish": "a literal translation a Chinese speaker would likely say", "why": "為什麼聽起來不道地（${sc}，一句話）"}
-  ]
-}
-Give 2-4 phrases and 0-2 avoid items (only when there is a typical Chinglish trap).${attempt ? `
+Naturalness rules:
+- Translate the meaning, never word by word. No Chinglish, no textbook or written style.
+- Use HIGH-FREQUENCY everyday spoken English that a learner can reuse: contractions, common phrasal verbs, common chunks.
+- Avoid rare, regional, outdated or cliché idioms (e.g. "raining cats and dogs", "piece of cake" is fine only if truly natural here). Use slang only if very common and it fits the situation.
+- Short, speakable sentences. Correct grammar and ${accent} spelling.${extra ? '\n- EXTRA INSTRUCTION: ' + extra : ''}
+
+Field rules:
+- "back": translate YOUR "native" sentence back into ${sc}, faithfully (so the learner can check the meaning matches).
+- "alternatives": 2 genuinely different, equally correct ways to say the same meaning; the label must describe its register truthfully (更隨性 / 比較客氣 / 更簡短 / 同事之間…).
+- "phrases": 2-4 reusable expressions copied WORD FOR WORD from "native" or an alternative (not from anywhere else). "zh" explains the meaning and when to use it, accurately, in ${sc}.
+- "avoid": 0-2 items, only when Chinese speakers commonly say something wrong or unnatural here. "chinglish" must really be wrong/unnatural (never a correct alternative); "why" says exactly what is wrong.
+
+Example (friend chat, Chinese input 「我今天忙翻了，晚點再回你」):
+{"understood":"我今天非常忙，晚一點再回覆你。","native":"I'm totally swamped today — I'll get back to you later.","back":"我今天忙到不行，晚點再回覆你。","alternatives":[{"label":"更隨性","en":"Crazy day — I'll text you later."},{"label":"比較客氣","en":"I'm a bit tied up today. Can I get back to you later?"}],"phrases":[{"en":"swamped","zh":"事情多到忙不過來，口語常用：I'm swamped."},{"en":"get back to you","zh":"之後再回覆你，工作和日常都很常用"}],"avoid":[{"chinglish":"I'm very busy today, I reply you later.","why":"reply 後面要加 to，而且要用未來式 I'll reply to you；very busy 也比較平淡"}]}
+
+Return JSON only, in exactly this shape (all Chinese text in ${sc}):
+{"understood": "...", "native": "...", "back": "...", "alternatives": [{"label": "...", "en": "..."}], "phrases": [{"en": "...", "zh": "..."}], "avoid": [{"chinglish": "...", "why": "..."}]}${attempt ? `
 
 The learner first TRIED to say it in English by themselves (possibly via speech recognition, so ignore capitalization/punctuation):
 """${attempt}"""
@@ -793,6 +813,89 @@ Also add this field to the JSON:
 "attempt": {"score": 0-100 (how natural and correct their try is), "good": "做得好的地方（${sc}，一句話；沒有就空字串）", "fix": "最主要的問題與怎麼改（${sc}，一兩句）", "fixed": "their attempt minimally corrected so it sounds natural (keep their wording where possible)"}` : ''}`;
 }
 
+// ================= 品質檢查 =================
+// 第一層：本地規則（不花額度）。第二層：請 AI 以「母語編輯＋口譯員」身分審稿並修正。
+const hasCJK = s => /[㐀-鿿豈-﫿]/.test(String(s || ''));
+const cleanEn = s => String(s || '').replace(/^[\s"'“”‘’「」]+|[\s"“”「」]+$/g, '').replace(/\s+/g, ' ').trim();
+const normEn = s => String(s || '').toLowerCase().replace(/[’‘]/g, "'").replace(/[^a-z0-9' ]+/g, ' ').replace(/\s+/g, ' ').trim();
+const PHRASE_SKIP = new Set(['be', 'am', 'is', 'are', 'was', 'were', 'been', "'s", 'sb', 'sth', 'someone', 'somebody', 'something', "someone's", "one's", 'one', 'a', 'an', 'the', 'to', 'do', 'does', 'did']);
+// 片語是否真的出現在句子裡（容許字典形式與變化：tie up／tied up、swamp／swamped、hit someone up／hit you up）
+function phraseInPool(phrase, pool) {
+  const words = normEn(phrase).split(' ').filter(w => w && !PHRASE_SKIP.has(w));
+  if (!words.length) return false;
+  const poolWords = normEn(pool).split(' ').map(p => p.replace(/'/g, ''));
+  const found = w => { w = w.replace(/'/g, ''); return poolWords.some(p => p === w || (w.length > 3 ? p.startsWith(w.slice(0, 4)) : (p.startsWith(w) && p.length <= w.length + 3))); };
+  const hit = words.filter(found).length;
+  // 3 個以上實詞時容許 1 個不規則變化（例如 get／got）
+  return words.length >= 3 ? hit >= words.length - 1 : hit === words.length;
+}
+function validateResult(r) {
+  const notes = [], out = { understood: String(r.understood || '').trim(), back: String(r.back || '').trim() };
+  out.native = cleanEn(r.native);
+  const nativeOk = !!out.native && !hasCJK(out.native) && /[a-z]/i.test(out.native);
+  const seen = new Set([normEn(out.native)]);
+  out.alternatives = (Array.isArray(r.alternatives) ? r.alternatives : []).map(a => ({ label: String((a && a.label) || '其他說法').trim(), en: cleanEn(a && a.en) }))
+    .filter(a => {
+      if (!a.en || hasCJK(a.en)) { if (a.en) notes.push('移除了含有中文的其他說法'); return false; }
+      const k = normEn(a.en); if (seen.has(k)) { notes.push('移除了和主句重複的其他說法'); return false; }
+      seen.add(k); return true;
+    }).slice(0, 3);
+  const pool = [out.native, ...out.alternatives.map(a => a.en)].join(' ');
+  const pseen = new Set();
+  out.phrases = (Array.isArray(r.phrases) ? r.phrases : []).map(p => ({ en: cleanEn(p && p.en), zh: String((p && p.zh) || '').trim() }))
+    .filter(p => {
+      if (!p.en || hasCJK(p.en) || !hasCJK(p.zh)) { notes.push(`移除了格式不對的用語「${p.en || '（空白）'}」`); return false; }
+      if (!phraseInPool(p.en, pool)) { notes.push(`移除了句子裡沒出現的用語「${p.en}」`); return false; }
+      const k = normEn(p.en); if (pseen.has(k)) return false; pseen.add(k); return true;
+    }).slice(0, 5);
+  const correct = new Set([out.native, ...out.alternatives.map(a => a.en)].map(normEn));
+  out.avoid = (Array.isArray(r.avoid) ? r.avoid : []).map(a => ({ chinglish: cleanEn(a && a.chinglish), why: String((a && a.why) || '').trim() }))
+    .filter(a => {
+      if (!a.chinglish || !a.why || hasCJK(a.chinglish)) return false;
+      if (correct.has(normEn(a.chinglish))) { notes.push('移除了把正確說法當成錯誤的陷阱'); return false; }
+      return true;
+    }).slice(0, 3);
+  if (out.back && !hasCJK(out.back)) out.back = '';
+  if (r.attempt) out.attempt = r.attempt;
+  return { r: out, ok: nativeOk, notes };
+}
+function reviewPrompt(zh, draft, strict) {
+  const accent = settings.accent === 'UK' ? 'British' : 'American', sc = settings.script;
+  const { attempt, ...d } = draft;
+  return `You are a strict editor: a native ${accent} English speaker who is also a professional Chinese–English interpreter. A language-learning app produced the draft below for a learner's Chinese speech. Check it carefully and fix every problem.${strict ? ' The learner suspects something is wrong, so be extra careful with meaning and naturalness.' : ''}
+
+Chinese speech (from speech recognition, may contain homophone errors):
+"""${zh}"""
+Situation: ${TONE_DESC[settings.tone]}
+
+Draft:
+${JSON.stringify(d)}
+
+Check:
+1. Meaning: "understood" correctly reads the Chinese; "native" and every alternative say exactly that — nothing missing (facts, times, numbers, requests), nothing added, same attitude and politeness.
+2. Naturalness: each English sentence is something a native speaker would really say aloud today in this situation — not textbook, not word-for-word, not a rare/outdated idiom, not slang that is too strong for the situation. Grammar and ${accent} spelling are correct.
+3. "back" is a faithful ${sc} back-translation of "native".
+4. Every "phrases[].en" appears word for word in "native" or an alternative, and its "zh" is an accurate, natural ${sc} explanation.
+5. Every "avoid[].chinglish" is genuinely wrong or unnatural (not an acceptable alternative), and "why" is accurate.
+6. Every alternative's "label" truthfully describes its register.
+
+Return JSON only:
+{"ok": true or false, "issues": ["每個問題用一句${sc}說明：哪裡錯、改成什麼；沒有問題就空陣列"], "fixed": {the complete corrected draft in exactly the same shape, unchanged parts copied as they are}}`;
+}
+// 審稿：回傳 { r, qc }。審稿失敗不影響結果，只標示「未檢查」。
+async function reviewResult(zh, v, strict) {
+  try {
+    const rv = await aiJSON(reviewPrompt(zh, v.r, strict), { temperature: 0.1 });
+    const issues = (Array.isArray(rv.issues) ? rv.issues : []).map(x => String(x).trim()).filter(Boolean).slice(0, 6);
+    if (rv.fixed && typeof rv.fixed === 'object' && (rv.ok === false || issues.length)) {
+      const v2 = validateResult(Object.assign({}, v.r, rv.fixed, { attempt: v.r.attempt }));
+      if (v2.ok) return { r: v2.r, qc: { status: 'fixed', issues: issues.length ? issues : ['AI 編輯修正了部分內容'], notes: v.notes.concat(v2.notes), by: rv._provider, at: Date.now() } };
+    }
+    return { r: v.r, qc: { status: 'pass', issues: [], notes: v.notes, by: rv._provider, at: Date.now() } };
+  } catch (e) {
+    return { r: v.r, qc: { status: 'skip', issues: [], notes: v.notes, reason: e.message, at: Date.now() } };
+  }
+}
 // ================= 語音輸入 =================
 // 兩種方式：
 //  whisper：MediaRecorder 錄音 + 音量偵測「說完了」才停止 → 整段送 Groq Whisper 辨識（不會中斷、不會重複）
@@ -1033,17 +1136,24 @@ async function doTranslate(extra, label) {
   box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   try {
     const attempt = !extra && tryOpen() ? $('#tryText').value.trim() : '';
-    const r = await aiJSON(buildPrompt(zh, extra, attempt));
-    if (!r.native) throw new Error('AI 沒有給出英文');
+    const raw = await aiJSON(buildPrompt(zh.slice(0, 2000), extra, attempt), { temperature: extra ? 0.6 : 0.35 });
+    let v = validateResult(raw);
+    let qc = { status: 'off', issues: [], notes: v.notes };
+    if (settings.qualityCheck !== false) {
+      box.innerHTML = `<div class="loading"><span class="spin"></span>正在檢查意思和用法是否正確…</div>`;
+      const rv = await reviewResult(zh, v, false);
+      if (rv.qc.status === 'fixed') v = { r: rv.r, ok: true, notes: rv.qc.notes };
+      qc = rv.qc;
+    }
+    if (!v.ok) throw new Error('AI 給的英文不完整或格式不對，請再試一次');
+    const r = v.r;
     const entry = {
       id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ts: Date.now(), zh,
-      understood: r.understood || '', native: String(r.native).trim(),
-      alternatives: (r.alternatives || []).filter(a => a && a.en).slice(0, 3),
-      phrases: (r.phrases || []).filter(p => p && p.en).slice(0, 5),
-      avoid: (r.avoid || []).filter(a => a && a.chinglish).slice(0, 3),
-      tone: settings.tone, accent: settings.accent, star: false, provider: r._provider
+      understood: r.understood, native: r.native, back: r.back,
+      alternatives: r.alternatives, phrases: r.phrases, avoid: r.avoid,
+      tone: settings.tone, accent: settings.accent, star: false, provider: raw._provider, qc
     };
-    if (attempt && r.attempt) entry.attempt = { text: attempt, score: +r.attempt.score || 0, good: r.attempt.good || '', fix: r.attempt.fix || '', fixed: r.attempt.fixed || '' };
+    if (attempt && r.attempt && typeof r.attempt === 'object') entry.attempt = { text: attempt, score: +r.attempt.score || 0, good: r.attempt.good || '', fix: r.attempt.fix || '', fixed: r.attempt.fixed || '' };
     if (current && current.zh === zh && hist[0] && hist[0].id === current.id) {
       ['star', 'ts', 'srs', 'used', 'usedAt', 'mine', 'shadow', 'savedNb'].forEach(k => { if (current[k] !== undefined) entry[k] = current[k]; });
       if (!entry.attempt && current.attempt) entry.attempt = current.attempt;
@@ -1080,6 +1190,7 @@ function renderResult(en) {
     <div class="bubble en">
       <button class="say copy" data-copy="${esc(en.native)}" aria-label="複製英文">${IC.copy}</button>
       <p class="en-main" id="nativeText">${esc(en.native)}</p>
+      ${en.back ? `<p class="back">英文的意思：${esc(en.back)}</p>` : ''}
       <div class="act4">
         <button data-say="${esc(en.native)}">${IC.spk}聽</button>
         <button data-slow="${esc(en.native)}">${IC.slow}慢速</button>
@@ -1087,6 +1198,7 @@ function renderResult(en) {
         <button data-star="${en.id}" class="${en.star ? 'on' : ''}">${IC.star}${en.star ? '已收藏' : '收藏'}</button>
       </div>
     </div>
+    ${qcRow(en)}
     ${cmp}
     ${alts ? `<div class="sec"><h3>其他說法</h3>${alts}</div>` : ''}
     ${phr ? `<div class="sec"><h3>道地用語<small>按「造句」用它說一句自己的話</small></h3>${phr}</div>` : ''}
@@ -1106,6 +1218,34 @@ function renderResult(en) {
     </div>
     ${srsLine(en)}`;
 }
+function qcRow(en) {
+  const q = en.qc;
+  const btn = `<button class="qc-btn" data-recheck="${en.id}">${IC.check}再確認一次</button>`;
+  if (!q || q.status === 'off') return `<div class="qc"><span class="qc-t">${q ? '沒有做 AI 檢查（設定裡已關閉）' : '這句是舊版產生的，還沒檢查過'}</span>${btn}</div>`;
+  if (q.status === 'skip') return `<div class="qc warn"><span class="qc-t">這次沒能檢查（檢查服務沒有回應），內容請自行留意</span>${btn}</div>`;
+  if (q.status === 'pass') return `<div class="qc ok"><span class="qc-t">${IC.check}AI 編輯檢查過：意思與用法正確</span>${btn}</div>`;
+  return `<details class="qc fixed"><summary><span class="qc-t">${IC.check}AI 編輯已修正 ${q.issues.length} 處（點開看改了什麼）</span>${btn}</summary><ul>${q.issues.map(x => `<li>${esc(x)}</li>`).join('')}</ul></details>`;
+}
+let rechecking = false;
+async function recheck(id) {
+  const h = hist.find(x => x.id === id); if (!h || rechecking) return;
+  if (!hasKey()) { openKeys(); return; }
+  rechecking = true;
+  document.querySelectorAll(`[data-recheck="${id}"]`).forEach(b => { b.disabled = true; b.innerHTML = '<span class="spin"></span>檢查中'; });
+  try {
+    const v = validateResult(h);
+    const rv = await reviewResult(h.zh, v, true);
+    if (rv.qc.status === 'skip') { toast('檢查服務沒有回應，請稍後再試：' + (rv.qc.reason || ''), 3500); return; }
+    if (rv.qc.status === 'fixed') ['understood', 'native', 'back', 'alternatives', 'phrases', 'avoid'].forEach(k => h[k] = rv.r[k]);
+    h.qc = rv.qc; saveHist();
+    if (current && current.id === id) renderResult(h);
+    renderHistory();
+    toast(rv.qc.status === 'fixed' ? `已修正 ${rv.qc.issues.length} 處，點開「AI 編輯已修正」看改了什麼` : '再檢查一次：意思與用法正確 👍', 3000);
+  } finally {
+    rechecking = false;
+    document.querySelectorAll(`[data-recheck="${id}"]`).forEach(b => { b.disabled = false; b.innerHTML = IC.check + '再確認一次'; });
+  }
+}
 const TWEAKS = {
   casual: ['再口語一點', 'Make "native" even more casual and slangy, like texting or chatting with a close friend.'],
   polite: ['客氣一點', 'Make "native" a bit more polite and considerate, but still natural spoken English.'],
@@ -1114,13 +1254,14 @@ const TWEAKS = {
 };
 
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-say],[data-slow],[data-copy],[data-star],[data-tweak],[data-act],[data-close],[data-playone],[data-shadow],[data-used],[data-nb],[data-quizone],[data-make]');
+  const t = e.target.closest('[data-say],[data-slow],[data-copy],[data-star],[data-tweak],[data-act],[data-close],[data-playone],[data-shadow],[data-used],[data-nb],[data-quizone],[data-make],[data-recheck]');
   if (!t) return;
   if (t.dataset.say !== undefined) { e.stopPropagation(); speak(t.dataset.say); }
   else if (t.dataset.slow !== undefined) speak(t.dataset.slow, 0.7);
   else if (t.dataset.copy !== undefined) copyText(t.dataset.copy);
   else if (t.dataset.star) { e.stopPropagation(); toggleStar(t.dataset.star); }
   else if (t.dataset.shadow) { const h = hist.find(x => x.id === t.dataset.shadow); if (h) openShadow(h); }
+  else if (t.dataset.recheck) { e.preventDefault(); e.stopPropagation(); recheck(t.dataset.recheck); }
   else if (t.dataset.used) markUsed(t.dataset.used);
   else if (t.dataset.nb) { const h = hist.find(x => x.id === t.dataset.nb); if (h) saveToNotebook(h); }
   else if (t.dataset.quizone) { const h = hist.find(x => x.id === t.dataset.quizone); if (h) startQuiz([h], '🧠 考考我'); }
@@ -1592,9 +1733,14 @@ $('#plFast').onclick = () => changeSpeed(0.1);
 // ================= 紀錄 =================
 let filter = 'all';
 function fmtTime(ts) { const d = new Date(ts), n = new Date(); const p = x => String(x).padStart(2, '0'); const t = `${p(d.getHours())}:${p(d.getMinutes())}`; return d.toDateString() === n.toDateString() ? '今天 ' + t : `${d.getMonth() + 1}/${d.getDate()} ${t}`; }
+// 搜尋：比對中文、AI 理解、回譯、英文、其他說法、道地用語與說明、我的造句；不分大小寫與標點；多個關鍵字用空白分開（全部都要符合）
+const normQ = s => String(s || '').toLowerCase().replace(/[’‘]/g, "'").replace(/[\s，。！？、,.!?；;：:「」『』"'()（）\-—…]+/g, ' ').trim();
+function searchText(h) {
+  return ' ' + normQ([h.zh, h.understood, h.back, h.native, ...(h.alternatives || []).map(a => a.en), ...(h.phrases || []).map(p => p.en + ' ' + p.zh), ...(h.mine || []).map(m => m.en)].join(' ')) + ' ';
+}
 function renderHistory() {
-  const q = $('#search').value.trim().toLowerCase();
-  const list = hist.filter(h => (filter === 'all' || h.star) && (!q || (h.zh + ' ' + h.native + ' ' + (h.understood || '')).toLowerCase().includes(q)));
+  const terms = normQ($('#search').value).split(' ').filter(Boolean);
+  const list = hist.filter(h => (filter === 'all' || h.star) && (!terms.length || terms.every(t => searchText(h).includes(t))));
   $('#histCount').textContent = hist.length ? `${hist.length} 句` : '';
   $('#hist').innerHTML = list.length ? list.map(h => `
     <div class="item ${h.star ? 'starred' : ''}" data-open="${h.id}">
@@ -1608,7 +1754,7 @@ function renderHistory() {
         <button class="say st ${h.star ? 'on' : ''}" data-star="${h.id}" aria-label="收藏">${IC.star}</button>
         <button class="say del" data-del="${h.id}" aria-label="刪除">${IC.trash}</button>
       </div>
-    </div>`).join('') : `<div class="empty">${hist.length ? '找不到符合的紀錄' : '還沒有紀錄。<br>到「說說看」錄一句中文，轉譯後會自動存在這裡。'}</div>`;
+    </div>`).join('') : `<div class="empty">${hist.length ? '找不到符合的紀錄。可以用空白分開多個關鍵字，中文、英文、道地用語都能搜尋' : '還沒有紀錄。<br>到「說說看」錄一句中文，轉譯後會自動存在這裡。'}</div>`;
   if (player.open) updatePlayer();
 }
 $('#hist').addEventListener('click', e => {
@@ -1671,7 +1817,7 @@ function openSettings() {
   $('#setLang').value = settings.lang; $('#setScript').value = settings.script;
   $('#setTts').value = settings.tts; fillVoiceSelect();
   $('#setRate').value = settings.rate; $('#rateVal').textContent = (+settings.rate).toFixed(2) + 'x';
-  $('#setAutoSpeak').checked = settings.autoSpeak;
+  $('#setAutoSpeak').checked = settings.autoSpeak; $('#setQc').checked = settings.qualityCheck !== false;
   $('#setSrs').value = settings.srsScope; $('#setGoal').value = String(settings.dailyGoal);
   $('#setModal').classList.add('show');
 }
@@ -1683,6 +1829,7 @@ $('#setTts').onchange = e => { settings.tts = e.target.value; saveSet(); fillVoi
 $('#setVoice').onchange = e => { const en = ttsEngine(); if (en === 'freeai') settings.fvoice = e.target.value; else if (en === 'gemini') settings.gvoice = e.target.value; else settings.voice = e.target.value; saveSet(); };
 $('#setRate').oninput = e => { settings.rate = +e.target.value; $('#rateVal').textContent = settings.rate.toFixed(2) + 'x'; saveSet(); updateSpeed(); if (aiAudio) aiAudio.playbackRate = settings.rate; };
 $('#setAutoSpeak').onchange = e => { settings.autoSpeak = e.target.checked; saveSet(); };
+$('#setQc').onchange = e => { settings.qualityCheck = e.target.checked; saveSet(); };
 $('#setSrs').onchange = e => { settings.srsScope = e.target.value; saveSet(); renderStats(); renderHistory(); };
 $('#setGoal').onchange = e => { settings.dailyGoal = +e.target.value; saveSet(); renderStats(); };
 $('#testVoice').onclick = async () => { const b = $('#testVoice'); b.disabled = true; await speak("Hey! No worries, I'm totally down for that."); b.disabled = false; };
@@ -1988,7 +2135,7 @@ Learner's answer (may come from speech recognition — ignore capitalization, pu
 Judge if the learner's answer expresses the same meaning in natural spoken English. Different wording is totally fine if it is natural.
 Return JSON only: {"score": 0-100, "grade": "good" | "close" | "wrong", "feedback": "一兩句${sc}：先說做得好的地方，再說要改哪裡", "fixed": "the learner's own sentence minimally corrected to sound natural (same as theirs if already good)"}
 good = natural and correct meaning (score >= 80); close = understandable but unnatural, grammar issues or missing a small part; wrong = meaning wrong or mostly missing.`;
-    const j = await aiJSON(prompt);
+    const j = await aiJSON(prompt, { temperature: 0.1 });
     revealQ({ score: Math.max(0, Math.min(100, +j.score || 0)), grade: j.grade || (j.score >= 80 ? 'good' : j.score >= 50 ? 'close' : 'wrong'), feedback: j.feedback || '', fixed: j.fixed || '' });
   } catch (e) { const lj = localJudge(h, ans); lj.feedback = `（AI 批改失敗，改用字詞比對）${lj.feedback}`; revealQ(lj); }
   finally { $('#qCheck').disabled = false; $('#qCheck').textContent = '✅ 送出'; }
@@ -2097,7 +2244,7 @@ $('#mkCheck').onclick = async () => {
     const sc = settings.script;
     const j = await aiJSON(`A Chinese learner is practicing the English expression "${p.en}" (meaning: ${p.zh}). They made their own sentence (maybe via speech recognition, ignore capitalization/punctuation): "${text}"
 Check whether they used the expression correctly and naturally in spoken ${settings.accent === 'UK' ? 'British' : 'American'} English.
-Return JSON only: {"score": 0-100, "feedback": "一兩句${sc}：用法對不對、哪裡可以更自然", "fixed": "their sentence corrected to sound natural (keep their idea and wording where possible)", "idea": "one more natural example using the expression in a different everyday situation"}`);
+Return JSON only: {"score": 0-100, "feedback": "一兩句${sc}：用法對不對、哪裡可以更自然", "fixed": "their sentence corrected to sound natural (keep their idea and wording where possible)", "idea": "one more natural, high-frequency example using the expression in a different everyday situation"}`, { temperature: 0.2 });
     const fixed = (j.fixed || text).trim();
     h.mine = h.mine || [];
     if (!h.mine.some(m => m.en.toLowerCase() === fixed.toLowerCase())) h.mine.push({ en: fixed, raw: text, phrase: p.en, ts: Date.now() });
