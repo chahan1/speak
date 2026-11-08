@@ -1,6 +1,6 @@
 // 道地口說轉譯器 - Service Worker（讓 App 可安裝、可離線開啟）
 // 更新 index.html 後，把下面的版本號改掉，手機下次開啟就會拿到新版
-const CACHE_NAME = 'speak-v1.5';
+const CACHE_NAME = 'speak-v1.6';
 const APP_FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './maskable-192.png', './maskable-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', event => {
